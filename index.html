@@ -1352,9 +1352,18 @@ function startApp(){
 }
 
 (function boot(){
-  const fbRaw=localStorage.getItem('nx_fb_config');
-  if(fbRaw){try{initFirebase(JSON.parse(fbRaw));}catch(e){setSyncStatus('error');}}
-  else{setSyncStatus('offline');}
+  // Firebase config — hardcoded (ไม่ต้องกรอกทุกครั้ง)
+  const DEFAULT_FB_CFG={
+    apiKey:"AIzaSyDmZ48Y4z8gThXGbds9kTDb75ELNEK9wjQ",
+    authDomain:"nextate-stock.firebaseapp.com",
+    databaseURL:"https://nextate-stock-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId:"nextate-stock",
+    storageBucket:"nextate-stock.firebasestorage.app",
+    messagingSenderId:"638380302423",
+    appId:"1:638380302423:web:e09b21e93aff35f0644312",
+    measurementId:"G-JFETKBQXM3"
+  };
+  try{initFirebase(DEFAULT_FB_CFG);}catch(e){setSyncStatus('error');}
   const user=localStorage.getItem('nx_user');
   if(!user){document.getElementById('login-screen').style.display='flex';}
   else{startApp();}
