@@ -713,7 +713,7 @@ function renderStock(){
     const qCell=(n)=>n>0?`<td class="qty-cell">${n}</td>`:`<td class="qty-cell qty-zero">—</td>`;
     return `<tr>
       <td style="color:var(--muted);font-size:11px">${p.id}</td>
-      <td><div style="font-weight:500">${cat.icon} ${p.name}</div><div style="font-size:11px;color:var(--muted)">${cat.label}</div></td>
+      <td><div style="font-weight:500">${cat.icon} ${p.name}</div></td>
       ${qCell(c.mic)}${qCell(c.mac)}${qCell(c.donut)}${qCell(c.aon)}
       <td class="qty-cell"><strong>${tot}</strong></td>
       ${p.is_serial?`<td style="font-size:11px;color:var(--muted)">${dep>0?`📤${dep} `:''} ${rep>0?`🔧${rep}`:''}</td>`:'<td></td>'}
@@ -928,8 +928,7 @@ function renderProducts(){
     const tot=getTotalStock(p.id);
     return `<tr>
       <td style="color:var(--muted);font-size:11px">${p.id}</td>
-      <td><div style="font-weight:500">${p.name}</div></td>
-      <td>${cat.icon} ${cat.label}</td>
+      <td><div style="font-weight:500">${cat.icon} ${p.name}</div></td>
       <td style="text-align:center">${p.is_serial?'<span class="tag t-blue">รายเครื่อง</span>':'<span class="tag t-purple">จำนวน</span>'}</td>
       <td style="text-align:center;font-weight:600">${tot}</td>
       <td style="font-size:12px;color:var(--muted)">${p.unit||'ชิ้น'}</td>
@@ -948,8 +947,8 @@ function renderProducts(){
       <div class="table-controls"><input class="search" oninput="filterTable(this,'tbl-prod')" placeholder="🔍 ค้นหา..."></div>
     </div>
     <div class="tbl-scroll"><table id="tbl-prod">
-      <thead><tr><th>ID</th><th>ชื่อสินค้า</th><th>หมวด</th><th>ติดตาม</th><th>คงคลัง</th><th>หน่วย</th><th>ต่ำสุด</th><th></th></tr></thead>
-      <tbody>${rows||'<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">ยังไม่มีสินค้า</td></tr>'}</tbody>
+      <thead><tr><th>ID</th><th>ชื่อสินค้า</th><th>ติดตาม</th><th>คงคลัง</th><th>หน่วย</th><th>ต่ำสุด</th><th></th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">ยังไม่มีสินค้า</td></tr>'}</tbody>
     </table></div>
   </div>`;
 }
