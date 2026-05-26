@@ -263,6 +263,10 @@ tr:hover td{background:rgba(79,142,247,.04)}
               <label class="lbl">รายละเอียด (ทุกชิ้น เช่น รุ่น, สี, spec)</label>
               <input id="gr-qty-detail" placeholder="เช่น Samsung Galaxy Tab A8, สีดำ...">
             </div>
+            <div class="form-group">
+              <label class="lbl">PIN / รหัสผ่าน (ทุกชิ้น)</label>
+              <input id="gr-qty-pin" placeholder="เช่น 1234 หรือปล่อยว่าง">
+            </div>
           </div>
         </div>
         <!-- SN MODE -->
@@ -285,6 +289,10 @@ tr:hover td{background:rgba(79,142,247,.04)}
             <div class="form-group">
               <label class="lbl">รายละเอียดเพิ่มเติม (ทุกชิ้น)</label>
               <input id="gr-serial-detail" placeholder="เช่น รุ่น, สี, spec...">
+            </div>
+            <div class="form-group">
+              <label class="lbl">PIN / รหัสผ่าน</label>
+              <input id="gr-sn-pin" placeholder="เช่น 1234 หรือปล่อยว่าง">
             </div>
           </div>
         </div>
@@ -358,6 +366,26 @@ tr:hover td{background:rgba(79,142,247,.04)}
       </div>
       <div class="divider"></div>
       <div class="form-group"><label class="lbl">หมายเหตุ</label><input id="gi-notes" placeholder="จุดประสงค์การใช้..."></div>
+      <div class="divider"></div>
+      <div class="lbl" style="margin-bottom:10px">📍 สถานที่ติดตั้ง</div>
+      <div class="form-grid">
+        <div class="form-group form-full">
+          <label class="lbl">ชื่อสถานที่ / ที่อยู่</label>
+          <input id="gi-loc-name" placeholder="เช่น โครงการ ABC ต.นาดี อ.เมือง จ.ขอนแก่น">
+        </div>
+        <div class="form-group">
+          <label class="lbl">Latitude</label>
+          <input type="number" id="gi-lat" step="any" placeholder="เช่น 16.4322">
+        </div>
+        <div class="form-group">
+          <label class="lbl">Longitude</label>
+          <input type="number" id="gi-lng" step="any" placeholder="เช่น 102.8236">
+        </div>
+        <div class="form-group form-full" style="flex-direction:row;align-items:center;gap:12px">
+          <button class="btn btn-secondary btn-sm" type="button" onclick="getGpsLocation()">📍 แชร์ตำแหน่งปัจจุบัน</button>
+          <span id="gi-gps-status" style="font-size:12px;color:var(--muted)"></span>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-gi')">ยกเลิก</button>
@@ -771,6 +799,7 @@ function renderUnits(){
       <td style="color:var(--muted);font-size:11px">${u.id}</td>
       <td><div style="font-weight:500">${cat.icon} ${prod.name}</div><div style="font-size:11px;color:var(--muted)">${u.serial||''}</div></td>
       <td style="font-size:12px">${u.detail||'—'}</td>
+      <td style="font-size:12px;color:var(--muted)">${u.pin?'🔑 '+u.pin:'—'}</td>
       <td>${statusTag(u.status)}</td>
       <td style="font-size:12px">${u.person?PERSON_ICON[u.person]+' '+u.person:'—'}</td>
       <td style="font-size:12px;color:var(--muted)">${proj?proj.name:u.status==='in_stock'?'คลัง':'—'}</td>
@@ -790,11 +819,14 @@ function renderUnits(){
   <div class="table-wrap">
     <div class="table-head">
       <div class="table-head-left"><h2>รายเครื่อง</h2><p>${units.length} รายการ</p></div>
-      <div class="table-controls"><input class="search" oninput="filterTable(this,'tbl-units')" placeholder="🔍 ค้นหา SN..."></div>
+      <div class="table-controls">
+        <input class="search" oninput="filterTable(this,'tbl-units')" placeholder="🔍 ค้นหา SN...">
+        <button class="btn btn-secondary btn-sm" onclick="exportUnits()">📥 Export</button>
+      </div>
     </div>
     <div class="tbl-scroll"><table id="tbl-units">
-      <thead><tr><th>ID</th><th>สินค้า / Serial</th><th>รายละเอียด</th><th>สถานะ</th><th>คนดูแล</th><th>โครงการ</th><th>วันรับเข้า</th><th></th></tr></thead>
-      <tbody>${rows||'<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted)">ไม่พบรายการ</td></tr>'}</tbody>
+      <thead><tr><th>ID</th><th>สินค้า / Serial</th><th>รายละเอียด</th><th>PIN</th><th>สถานะ</th><th>คนดูแล</th><th>โครงการ</th><th>วันรับเข้า</th><th></th></tr></thead>
+      <tbody>${rows||'<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted)">ไม่พบรายการ</td></tr>'}</tbody>
     </table></div>
   </div>`;
 }
@@ -849,7 +881,10 @@ function renderMovements(){
   <div class="table-wrap">
     <div class="table-head">
       <div class="table-head-left"><h2>ประวัติทั้งหมด</h2><p>${mvs.length} รายการ</p></div>
-      <div class="table-controls"><input class="search" oninput="filterTable(this,'tbl-mvs')" placeholder="🔍 ค้นหา..."></div>
+      <div class="table-controls">
+        <input class="search" oninput="filterTable(this,'tbl-mvs')" placeholder="🔍 ค้นหา...">
+        <button class="btn btn-secondary btn-sm" onclick="exportMovements()">📥 Export</button>
+      </div>
     </div>
     <div class="tbl-scroll"><table id="tbl-mvs">
       <thead><tr><th>ID</th><th>วันที่</th><th>ประเภท</th><th>สินค้า/Serial</th><th>จำนวน</th><th>คน</th><th>Supplier/โครงการ</th><th>หมายเหตุ</th><th>บันทึกโดย</th></tr></thead>
@@ -926,9 +961,10 @@ function renderProducts(){
   const rows=prods.map(p=>{
     const cat=CATS[p.category]||{icon:'📦',label:p.category||''};
     const tot=getTotalStock(p.id);
+    const thumb=p.images&&p.images[0]?`<img src="${p.images[0]}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:8px">`:'';
     return `<tr>
       <td style="color:var(--muted);font-size:11px">${p.id}</td>
-      <td><div style="font-weight:500">${cat.icon} ${p.name}</div></td>
+      <td><div style="font-weight:500;display:flex;align-items:center">${thumb}${cat.icon} ${p.name}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">${p.sku||''}</div></td>
       <td style="text-align:center">${p.is_serial?'<span class="tag t-blue">รายเครื่อง</span>':'<span class="tag t-purple">จำนวน</span>'}</td>
       <td style="text-align:center;font-weight:600">${tot}</td>
       <td style="font-size:12px;color:var(--muted)">${p.unit||'ชิ้น'}</td>
@@ -944,10 +980,13 @@ function renderProducts(){
   <div class="table-wrap">
     <div class="table-head">
       <div class="table-head-left"><h2>สินค้าทั้งหมด</h2><p>${prods.length} รายการ</p></div>
-      <div class="table-controls"><input class="search" oninput="filterTable(this,'tbl-prod')" placeholder="🔍 ค้นหา..."></div>
+      <div class="table-controls">
+        <input class="search" oninput="filterTable(this,'tbl-prod')" placeholder="🔍 ค้นหา...">
+        <button class="btn btn-secondary btn-sm" onclick="exportProducts()">📥 Export</button>
+      </div>
     </div>
     <div class="tbl-scroll"><table id="tbl-prod">
-      <thead><tr><th>ID</th><th>ชื่อสินค้า</th><th>ติดตาม</th><th>คงคลัง</th><th>หน่วย</th><th>ต่ำสุด</th><th></th></tr></thead>
+      <thead><tr><th>ID</th><th>ชื่อสินค้า / SKU</th><th>ติดตาม</th><th>คงคลัง</th><th>หน่วย</th><th>ต่ำสุด</th><th></th></tr></thead>
       <tbody>${rows||'<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted)">ยังไม่มีสินค้า</td></tr>'}</tbody>
     </table></div>
   </div>`;
@@ -1050,12 +1089,14 @@ function saveGR(){
 
   if(prod.is_serial){
     let serials=[], person='mic', detail='';
+    let pin='';
     if(_grMode==='qty'){
       // QTY MODE — auto-generate serial IDs
       const count=parseInt(g('gr-qty-count'))||0;
       if(count<1){toast('⚠️ กรอกจำนวนอย่างน้อย 1');return;}
       person=g('gr-person-qty');
       detail=g('gr-qty-detail');
+      pin=g('gr-qty-pin')||'';
       const units=load('nx_units')||[];
       let ctr=units.length+1;
       const pfxMap={tablet:'T',battery:'B',sim:'S',led:'L',router:'R',switching:'SW',board:'BD',poe:'POE',computer:'PC',other:'X'};
@@ -1068,12 +1109,13 @@ function saveGR(){
       if(!serials.length){toast('⚠️ กรอก Serial Number อย่างน้อย 1 ตัว');return;}
       person=g('gr-person-serial');
       detail=g('gr-serial-detail');
+      pin=g('gr-sn-pin')||'';
     }
     const units=load('nx_units')||[];
     let ctr=units.length+1;
     const newUnits=serials.map(sn=>({
       id:'U'+String(ctr++).padStart(3,'0'),
-      product_id:pid,serial:sn,detail,status:'in_stock',person,project_id:null,date_in:date,notes
+      product_id:pid,serial:sn,detail,pin,status:'in_stock',person,project_id:null,date_in:date,notes
     }));
     save('nx_units',[...units,...newUnits]);
     newUnits.forEach(u=>{
@@ -1096,6 +1138,60 @@ function saveGR(){
   closeModal('modal-gr');renderPage(currentPage);
 }
 
+// ==================== GPS LOCATION ====================
+function getGpsLocation(){
+  const st=document.getElementById('gi-gps-status');
+  if(!navigator.geolocation){if(st)st.textContent='เบราว์เซอร์ไม่รองรับ GPS';return;}
+  if(st)st.textContent='⏳ กำลังระบุตำแหน่ง...';
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      const lat=pos.coords.latitude.toFixed(6);
+      const lng=pos.coords.longitude.toFixed(6);
+      document.getElementById('gi-lat').value=lat;
+      document.getElementById('gi-lng').value=lng;
+      if(st)st.textContent=`✅ ${lat}, ${lng}`;
+    },
+    err=>{if(st)st.textContent='❌ ไม่สามารถระบุตำแหน่งได้';}
+  );
+}
+
+// ==================== EXPORT DATA ====================
+function exportCSV(data,filename){
+  if(!data.length){toast('⚠️ ไม่มีข้อมูลให้ export');return;}
+  const keys=Object.keys(data[0]);
+  const rows=[keys.join(','),...data.map(row=>keys.map(k=>{
+    let v=row[k]??'';
+    if(typeof v==='object') v=JSON.stringify(v);
+    v=String(v).replace(/"/g,'""');
+    return `"${v}"`;
+  }).join(','))];
+  const blob=new Blob(['﻿'+rows.join('\n')],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);toast('📥 Export แล้ว ✅');
+}
+function exportUnits(){
+  const units=load('nx_units')||[];
+  const prods=load('nx_products')||[];
+  const projs=load('nx_projects')||[];
+  const rows=units.map(u=>{
+    const p=prods.find(x=>x.id===u.product_id)||{};
+    const pj=projs.find(x=>x.id===u.project_id)||{};
+    return {ID:u.id,SKU:p.sku||'',สินค้า:p.name||'',Serial:u.serial||'',PIN:u.pin||'',รายละเอียด:u.detail||'',สถานะ:u.status||'',คนดูแล:u.person||'',โครงการ:pj.name||'',วันรับเข้า:u.date_in||''};
+  });
+  exportCSV(rows,'nextate-units-'+today()+'.csv');
+}
+function exportMovements(){
+  const mvs=load('nx_movements')||[];
+  const rows=mvs.map(m=>({ID:m.id,วันที่:m.date,ประเภท:m.type,สินค้า:m.product_name||'',Serial:m.serial||'',จำนวน:m.qty||'',คน:m.person||'',โครงการ:m.project_name||'',Supplier:m.supplier_name||'',สถานที่:m.location?.name||'',Lat:m.location?.lat||'',Lng:m.location?.lng||'',หมายเหตุ:m.notes||''}));
+  exportCSV(rows,'nextate-movements-'+today()+'.csv');
+}
+function exportProducts(){
+  const prods=load('nx_products')||[];
+  const rows=prods.map(p=>({ID:p.id,SKU:p.sku||'',ชื่อสินค้า:p.name,หมวด:p.category,ติดตาม:p.is_serial?'รายเครื่อง':'จำนวน',หน่วย:p.unit,ขั้นต่ำ:p.min_qty,คงคลัง:getTotalStock(p.id),หมายเหตุ:p.notes||''}));
+  exportCSV(rows,'nextate-products-'+today()+'.csv');
+}
+
 // ==================== OPEN GI MODAL ====================
 function openGI(presetProductId){
   const projs=load('nx_projects')||[];
@@ -1104,6 +1200,10 @@ function openGI(presetProductId){
   document.getElementById('gi-project').innerHTML='<option value="">— เลือกโครงการ —</option>'+projs.map(p=>`<option value="${p.id}">${p.status==='done'?'✅ ':'🏗️ '}${p.name}</option>`).join('');
   document.getElementById('gi-product').innerHTML=prods.map(p=>`<option value="${p.id}" ${p.id===presetProductId?'selected':''}>${CATS[p.category]?.icon||'📦'} ${p.name}</option>`).join('');
   document.getElementById('gi-notes').value='';
+  document.getElementById('gi-loc-name').value='';
+  document.getElementById('gi-lat').value='';
+  document.getElementById('gi-lng').value='';
+  const gst=document.getElementById('gi-gps-status');if(gst)gst.textContent='';
   onGiProductChange();
   openModal('modal-gi');
 }
@@ -1140,6 +1240,10 @@ function saveGI(){
   const person=g('gi-person');
   const date=g('gi-date')||today();
   const notes=g('gi-notes');
+  const locName=g('gi-loc-name')||'';
+  const lat=g('gi-lat')||'';
+  const lng=g('gi-lng')||'';
+  const location={name:locName,lat,lng};
   const mvs=load('nx_movements')||[];
 
   if(prod.is_serial){
@@ -1150,7 +1254,7 @@ function saveGI(){
       const idx=units.findIndex(u=>u.id===uid);
       if(idx>-1){ units[idx].status='deployed';units[idx].person=person;units[idx].project_id=projId;units[idx].date_used=date; }
       const u=units[idx]||{};
-      mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date,type:'GI',product_id:pid,product_name:prod.name,unit_id:uid,serial:u.serial||'',qty:1,person,project_id:projId,project_name:proj?.name||'',notes,created_by:currentUser()});
+      mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date,type:'GI',product_id:pid,product_name:prod.name,unit_id:uid,serial:u.serial||'',qty:1,person,project_id:projId,project_name:proj?.name||'',location,notes,created_by:currentUser()});
     });
     save('nx_units',units);
     save('nx_movements',mvs);
@@ -1166,7 +1270,7 @@ function saveGI(){
     }
     PERSONS.forEach(p=>{ stock[pid][p]=(stock[pid][p]||0)-(qtys[p]||0); });
     save('nx_stock',stock);
-    mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date,type:'GI',product_id:pid,product_name:prod.name,qty:total,qty_detail:qtys,person,project_id:projId,project_name:proj?.name||'',notes,created_by:currentUser()});
+    mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date,type:'GI',product_id:pid,product_name:prod.name,qty:total,qty_detail:qtys,person,project_id:projId,project_name:proj?.name||'',location,notes,created_by:currentUser()});
     save('nx_movements',mvs);
     toast(`📤 เบิกออก ${total} ${prod.unit||'ชิ้น'} ✅`);
   }
@@ -1232,27 +1336,96 @@ function submitForm(){
 }
 
 // -- Products --
+const SKU_PREFIX={tablet:'TAB',battery:'BAT',sim:'SIM',led:'LED',router:'ROU',switching:'SWT',board:'BRD',poe:'POE',computer:'CPU',cable:'CBL',other:'OTH'};
+function genSKU(cat){
+  const prods=load('nx_products')||[];
+  const pfx=SKU_PREFIX[cat]||'OTH';
+  const cnt=prods.filter(p=>p.category===cat).length+1;
+  return pfx+'-'+String(cnt).padStart(3,'0');
+}
 function productForm(v={}){
   const catOpts=Object.entries(CATS).map(([k,c])=>`<option value="${k}" ${v.category===k?'selected':''}>${c.icon} ${c.label}</option>`).join('');
+  const sku=v.sku||'';
+  const imgs=v.images||[];
+  const imgPreviews=imgs.map((src,i)=>`<div style="position:relative;display:inline-block"><img src="${src}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)"><button type="button" onclick="removeProdImg(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join('');
   return `<div class="form-grid">
     <div class="form-group form-full"><label class="lbl">ชื่อสินค้า</label><input id="pf-name" value="${v.name||''}" placeholder="ชื่อสินค้า..."></div>
-    <div class="form-group"><label class="lbl">หมวด</label><select id="pf-cat">${catOpts}</select></div>
+    <div class="form-group"><label class="lbl">หมวด</label><select id="pf-cat" onchange="onPfCatChange()">${catOpts}</select></div>
+    <div class="form-group"><label class="lbl">SKU <span style="font-size:10px;color:var(--muted)">(auto)</span></label><input id="pf-sku" value="${sku}" placeholder="จะสร้างอัตโนมัติ..."></div>
     <div class="form-group"><label class="lbl">ติดตาม</label>
       <select id="pf-serial"><option value="1" ${v.is_serial?'selected':''}>รายเครื่อง (Serial)</option><option value="0" ${!v.is_serial?'selected':''}>จำนวน (Bulk)</option></select></div>
     <div class="form-group"><label class="lbl">หน่วย</label><input id="pf-unit" value="${v.unit||'ชิ้น'}"></div>
     <div class="form-group"><label class="lbl">จำนวนขั้นต่ำ</label><input type="number" id="pf-min" value="${v.min_qty||0}" min="0"></div>
     <div class="form-group form-full"><label class="lbl">หมายเหตุ</label><input id="pf-notes" value="${v.notes||''}"></div>
+    <div class="form-group form-full">
+      <label class="lbl">รูปสินค้า (สูงสุด 2 รูป)</label>
+      <div id="pf-img-preview" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">${imgPreviews}</div>
+      <input type="file" id="pf-img-input" accept="image/*" style="display:none" onchange="addProdImg(this)">
+      <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('pf-img-input').click()">📷 เพิ่มรูป</button>
+      <span style="font-size:11px;color:var(--muted);margin-left:8px">รูปจะถูกบีบอัดและบันทึกในระบบ</span>
+    </div>
   </div>`;
 }
-function openAddProduct(){document.getElementById('form-title').textContent='+ เพิ่มสินค้า';document.getElementById('form-body').innerHTML=productForm();_formAction='add-product';_editId='';openModal('modal-form');}
-function openEditProduct(id){const p=(load('nx_products')||[]).find(x=>x.id===id)||{};document.getElementById('form-title').textContent='✏️ แก้ไขสินค้า';document.getElementById('form-body').innerHTML=productForm(p);_formAction='edit-product';_editId=id;openModal('modal-form');}
+let _pfImages=[];
+function onPfCatChange(){
+  const cat=document.getElementById('pf-cat')?.value;
+  const skuEl=document.getElementById('pf-sku');
+  if(skuEl&&!skuEl.dataset.manual) skuEl.value=genSKU(cat);
+}
+function addProdImg(input){
+  const files=input.files;if(!files.length)return;
+  const current=document.getElementById('pf-img-preview').querySelectorAll('img').length;
+  if(current>=2){toast('⚠️ ใส่รูปได้สูงสุด 2 รูป');return;}
+  const file=files[0];
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const img=new Image();
+    img.onload=function(){
+      const canvas=document.createElement('canvas');
+      const max=400;
+      let w=img.width,h=img.height;
+      if(w>max||h>max){if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;}}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const b64=canvas.toDataURL('image/jpeg',0.7);
+      _pfImages.push(b64);
+      renderPfImgPreview();
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+  input.value='';
+}
+function removeProdImg(idx){_pfImages.splice(idx,1);renderPfImgPreview();}
+function renderPfImgPreview(){
+  const el=document.getElementById('pf-img-preview');if(!el)return;
+  el.innerHTML=_pfImages.map((src,i)=>`<div style="position:relative;display:inline-block"><img src="${src}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)"><button type="button" onclick="removeProdImg(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer">✕</button></div>`).join('');
+}
+function openAddProduct(){
+  _pfImages=[];
+  const cat=Object.keys(CATS)[0];
+  document.getElementById('form-title').textContent='+ เพิ่มสินค้า';
+  document.getElementById('form-body').innerHTML=productForm();
+  _formAction='add-product';_editId='';
+  openModal('modal-form');
+  setTimeout(()=>{const el=document.getElementById('pf-sku');if(el){el.value=genSKU(cat);el.addEventListener('input',()=>el.dataset.manual='1');}},50);
+}
+function openEditProduct(id){
+  const p=(load('nx_products')||[]).find(x=>x.id===id)||{};
+  _pfImages=[...(p.images||[])];
+  document.getElementById('form-title').textContent='✏️ แก้ไขสินค้า';
+  document.getElementById('form-body').innerHTML=productForm(p);
+  _formAction='edit-product';_editId=id;openModal('modal-form');
+}
 function saveProduct(){
   const name=g('pf-name');if(!name){toast('⚠️ กรอกชื่อสินค้า');return;}
   const prods=load('nx_products')||[];
-  const obj={name,category:g('pf-cat'),is_serial:g('pf-serial')==='1',unit:g('pf-unit')||'ชิ้น',min_qty:parseInt(g('pf-min'))||0,notes:g('pf-notes')};
+  const cat=g('pf-cat');
+  let sku=g('pf-sku')||genSKU(cat);
+  const obj={name,category:cat,sku,is_serial:g('pf-serial')==='1',unit:g('pf-unit')||'ชิ้น',min_qty:parseInt(g('pf-min'))||0,notes:g('pf-notes'),images:_pfImages};
   if(_formAction==='edit-product'){const idx=prods.findIndex(p=>p.id===_editId);if(idx>-1) prods[idx]={...prods[idx],...obj};}
   else {obj.id=genId('P',prods);prods.push(obj);}
-  save('nx_products',prods);closeModal('modal-form');toast('บันทึกแล้ว ✅');renderPage(currentPage);
+  save('nx_products',prods);_pfImages=[];closeModal('modal-form');toast('บันทึกแล้ว ✅');renderPage(currentPage);
 }
 function deleteProduct(id){showConfirm('ลบสินค้านี้?','',()=>{save('nx_products',(load('nx_products')||[]).filter(p=>p.id!==id));toast('ลบแล้ว');renderPage(currentPage);},'ลบ');}
 
