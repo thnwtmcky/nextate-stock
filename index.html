@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#0f1117">
 <title>NEXTATE · Stock v2</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
@@ -173,6 +174,91 @@ tr:hover td{background:rgba(79,142,247,.04)}
   </div>
 </div>
 
+<!-- ===== SCAN LANDING PAGE ===== -->
+<div id="scan-screen" style="display:none;position:fixed;inset:0;z-index:2000;background:var(--bg);overflow-y:auto">
+  <div style="max-width:480px;margin:0 auto;padding:20px 16px 60px">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+      <div style="width:38px;height:38px;background:linear-gradient(135deg,#4f8ef7,#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:16px;flex-shrink:0">N</div>
+      <div>
+        <div style="font-weight:700;font-size:15px">NEXTATE Stock</div>
+        <div id="scan-sync-label" style="font-size:11px;color:var(--muted)">⏳ กำลังโหลดข้อมูล...</div>
+      </div>
+    </div>
+    <!-- Unit Info Card -->
+    <div id="scan-unit-card" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px">
+      <div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">⏳ กำลังโหลดข้อมูลอุปกรณ์...</div>
+    </div>
+    <!-- Action Section -->
+    <div id="scan-action-section" style="display:none">
+      <!-- GI Form -->
+      <div id="scan-gi-form">
+        <div style="font-weight:600;font-size:15px;margin-bottom:14px">📤 เบิกออกอุปกรณ์นี้</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="lbl">วันที่เบิก</label>
+            <input type="date" id="scan-date">
+          </div>
+          <div class="form-group">
+            <label class="lbl">ผู้เบิก</label>
+            <select id="scan-person">
+              <option value="mic">👤 mic</option>
+              <option value="mac">👤 mac</option>
+              <option value="donut">🍩 donut</option>
+              <option value="aon">👤 aon</option>
+            </select>
+          </div>
+          <div class="form-group form-full">
+            <label class="lbl">โครงการ</label>
+            <select id="scan-project"><option value="">— เลือกโครงการ —</option></select>
+          </div>
+          <div class="form-group form-full">
+            <label class="lbl">ชื่อสถานที่ / ที่อยู่</label>
+            <input id="scan-loc-name" placeholder="เช่น โครงการ ABC อ.เมือง จ.ขอนแก่น">
+          </div>
+          <div class="form-group">
+            <label class="lbl">Latitude</label>
+            <input type="number" id="scan-lat" step="any" placeholder="16.4322">
+          </div>
+          <div class="form-group">
+            <label class="lbl">Longitude</label>
+            <input type="number" id="scan-lng" step="any" placeholder="102.8236">
+          </div>
+          <div class="form-group form-full" style="flex-direction:row;align-items:center;gap:10px">
+            <button class="btn btn-secondary btn-sm" onclick="getScanGps()">📍 ตำแหน่งปัจจุบัน</button>
+            <span id="scan-gps-status" style="font-size:11px;color:var(--muted)"></span>
+          </div>
+          <div class="form-group form-full">
+            <label class="lbl">หมายเหตุ</label>
+            <input id="scan-notes" placeholder="จุดประสงค์การใช้...">
+          </div>
+        </div>
+        <button class="btn btn-danger" style="width:100%;margin-top:8px;justify-content:center;font-size:15px" onclick="submitScanGI()">📤 ยืนยันเบิกออก</button>
+      </div>
+      <!-- Already Deployed -->
+      <div id="scan-deployed-msg" style="display:none;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:16px;text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">📤</div>
+        <div style="font-weight:600;margin-bottom:4px">อุปกรณ์นี้กำลังใช้งานอยู่</div>
+        <div id="scan-deployed-detail" style="font-size:13px;color:var(--muted)"></div>
+        <a href="/" style="display:inline-block;margin-top:12px;font-size:13px;color:var(--accent)">เปิดระบบหลัก →</a>
+      </div>
+      <!-- Repair -->
+      <div id="scan-repair-msg" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:16px;text-align:center">
+        <div style="font-size:24px;margin-bottom:8px">🔧</div>
+        <div style="font-weight:600;margin-bottom:4px">อุปกรณ์นี้อยู่ระหว่างซ่อม</div>
+        <a href="/" style="display:inline-block;margin-top:12px;font-size:13px;color:var(--accent)">เปิดระบบหลัก →</a>
+      </div>
+    </div>
+    <!-- Success -->
+    <div id="scan-success" style="display:none;text-align:center;padding:40px 20px">
+      <div style="font-size:60px;margin-bottom:16px">✅</div>
+      <div style="font-weight:700;font-size:20px;margin-bottom:8px">บันทึกสำเร็จ!</div>
+      <div id="scan-success-msg" style="color:var(--muted);font-size:14px;margin-bottom:24px"></div>
+      <a href="/" class="btn btn-primary">เปิดระบบหลัก</a>
+    </div>
+  </div>
+</div>
+
 <!-- ===== SIDEBAR ===== -->
 <div id="sidebar">
   <div class="logo">
@@ -267,6 +353,34 @@ tr:hover td{background:rgba(79,142,247,.04)}
               <label class="lbl">PIN / รหัสผ่าน (ทุกชิ้น)</label>
               <input id="gr-qty-pin" placeholder="เช่น 1234 หรือปล่อยว่าง">
             </div>
+            <div class="form-group">
+              <label class="lbl">รหัส Anydesk</label>
+              <input id="gr-qty-anydesk" placeholder="เช่น 123 456 789">
+            </div>
+            <div class="form-group">
+              <label class="lbl">ยี่ห้อ</label>
+              <input id="gr-qty-brand" placeholder="เช่น Samsung, Huawei">
+            </div>
+            <div class="form-group">
+              <label class="lbl">รุ่น</label>
+              <input id="gr-qty-model" placeholder="เช่น Galaxy A7, Tab S6">
+            </div>
+            <div class="form-group">
+              <label class="lbl">IMEI / ME1</label>
+              <input id="gr-qty-imei1" placeholder="เลข IMEI 1">
+            </div>
+            <div class="form-group">
+              <label class="lbl">IMEI / ME2</label>
+              <input id="gr-qty-imei2" placeholder="เลข IMEI 2">
+            </div>
+            <div class="form-group">
+              <label class="lbl">วันหมดประกัน</label>
+              <input type="date" id="gr-qty-warranty">
+            </div>
+            <div class="form-group">
+              <label class="lbl">ร้านที่ซื้อ</label>
+              <input id="gr-qty-store" placeholder="เช่น Shopee, Lazada, ซื้อตรง">
+            </div>
           </div>
         </div>
         <!-- SN MODE -->
@@ -293,6 +407,34 @@ tr:hover td{background:rgba(79,142,247,.04)}
             <div class="form-group">
               <label class="lbl">PIN / รหัสผ่าน</label>
               <input id="gr-sn-pin" placeholder="เช่น 1234 หรือปล่อยว่าง">
+            </div>
+            <div class="form-group">
+              <label class="lbl">รหัส Anydesk</label>
+              <input id="gr-sn-anydesk" placeholder="เช่น 123 456 789">
+            </div>
+            <div class="form-group">
+              <label class="lbl">ยี่ห้อ</label>
+              <input id="gr-sn-brand" placeholder="เช่น Samsung, Huawei">
+            </div>
+            <div class="form-group">
+              <label class="lbl">รุ่น</label>
+              <input id="gr-sn-model" placeholder="เช่น Galaxy A7">
+            </div>
+            <div class="form-group">
+              <label class="lbl">IMEI / ME1</label>
+              <input id="gr-sn-imei1" placeholder="เลข IMEI 1">
+            </div>
+            <div class="form-group">
+              <label class="lbl">IMEI / ME2</label>
+              <input id="gr-sn-imei2" placeholder="เลข IMEI 2">
+            </div>
+            <div class="form-group">
+              <label class="lbl">วันหมดประกัน</label>
+              <input type="date" id="gr-sn-warranty">
+            </div>
+            <div class="form-group">
+              <label class="lbl">ร้านที่ซื้อ</label>
+              <input id="gr-sn-store" placeholder="เช่น Shopee, Lazada">
             </div>
           </div>
         </div>
@@ -452,6 +594,24 @@ tr:hover td{background:rgba(79,142,247,.04)}
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-form')">ยกเลิก</button>
       <button class="btn btn-primary" id="form-submit" onclick="submitForm()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: QR Code ===== -->
+<div class="modal-overlay" id="modal-qr">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header">
+      <h2>🔲 QR Code อุปกรณ์</h2>
+      <button class="modal-close" onclick="closeModal('modal-qr')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center">
+      <div id="qr-canvas" style="display:inline-block;padding:12px;background:#fff;border-radius:12px;margin-bottom:16px"></div>
+      <div id="qr-info" style="text-align:left;background:var(--card2);border-radius:10px;padding:14px;font-size:13px;line-height:1.8"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-qr')">ปิด</button>
+      <button class="btn btn-primary" onclick="printQR()">🖨️ พิมพ์</button>
     </div>
   </div>
 </div>
@@ -795,16 +955,29 @@ function renderUnits(){
     const prod=prods.find(p=>p.id===u.product_id)||{name:u.product_id,category:''};
     const proj=projs.find(p=>p.id===u.project_id);
     const cat=CATS[prod.category]||{icon:'📦'};
+    const warrantyExpired=u.warranty&&u.warranty<today();
     return `<tr>
       <td style="color:var(--muted);font-size:11px">${u.id}</td>
-      <td><div style="font-weight:500">${cat.icon} ${prod.name}</div><div style="font-size:11px;color:var(--muted)">${u.serial||''}</div></td>
+      <td>
+        <div style="font-weight:500">${cat.icon} ${prod.name}</div>
+        <div style="font-size:11px;color:var(--muted)">${u.serial||''}</div>
+        ${u.brand||u.model?`<div style="font-size:10px;color:var(--muted)">${[u.brand,u.model].filter(Boolean).join(' / ')}</div>`:''}
+      </td>
       <td style="font-size:12px">${u.detail||'—'}</td>
-      <td style="font-size:12px;color:var(--muted)">${u.pin?'🔑 '+u.pin:'—'}</td>
+      <td style="font-size:11px;color:var(--muted)">
+        ${u.pin?`<div>🔑 ${u.pin}</div>`:''}
+        ${u.anydesk?`<div>🖥️ ${u.anydesk}</div>`:''}
+        ${!u.pin&&!u.anydesk?'—':''}
+      </td>
       <td>${statusTag(u.status)}</td>
       <td style="font-size:12px">${u.person?PERSON_ICON[u.person]+' '+u.person:'—'}</td>
       <td style="font-size:12px;color:var(--muted)">${proj?proj.name:u.status==='in_stock'?'คลัง':'—'}</td>
-      <td style="font-size:11px;color:var(--muted)">${fmtDate(u.date_in)}</td>
+      <td style="font-size:11px">
+        <div>${fmtDate(u.date_in)}</div>
+        ${u.warranty?`<div style="color:${warrantyExpired?'var(--red)':'var(--muted)'}">🛡️ ${u.warranty}${warrantyExpired?' ⚠️':''}</div>`:''}
+      </td>
       <td><div class="row-actions">
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="openQR('${u.id}')" title="QR Code">🔲</button>
         <button class="btn btn-warning btn-sm" onclick="openUnitStatus('${u.id}')">🔄</button>
         <button class="btn btn-danger btn-sm btn-icon" onclick="deleteUnit('${u.id}')">🗑</button>
       </div></td>
@@ -825,7 +998,7 @@ function renderUnits(){
       </div>
     </div>
     <div class="tbl-scroll"><table id="tbl-units">
-      <thead><tr><th>ID</th><th>สินค้า / Serial</th><th>รายละเอียด</th><th>PIN</th><th>สถานะ</th><th>คนดูแล</th><th>โครงการ</th><th>วันรับเข้า</th><th></th></tr></thead>
+      <thead><tr><th>ID</th><th>สินค้า / Serial</th><th>รายละเอียด</th><th>PIN / Anydesk</th><th>สถานะ</th><th>คนดูแล</th><th>โครงการ</th><th>วันรับเข้า / ประกัน</th><th></th></tr></thead>
       <tbody>${rows||'<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted)">ไม่พบรายการ</td></tr>'}</tbody>
     </table></div>
   </div>`;
@@ -1089,7 +1262,7 @@ function saveGR(){
 
   if(prod.is_serial){
     let serials=[], person='mic', detail='';
-    let pin='';
+    let pin='',anydesk='',brand='',model='',imei1='',imei2='',warranty='',store='';
     if(_grMode==='qty'){
       // QTY MODE — auto-generate serial IDs
       const count=parseInt(g('gr-qty-count'))||0;
@@ -1097,6 +1270,13 @@ function saveGR(){
       person=g('gr-person-qty');
       detail=g('gr-qty-detail');
       pin=g('gr-qty-pin')||'';
+      anydesk=g('gr-qty-anydesk')||'';
+      brand=g('gr-qty-brand')||'';
+      model=g('gr-qty-model')||'';
+      imei1=g('gr-qty-imei1')||'';
+      imei2=g('gr-qty-imei2')||'';
+      warranty=g('gr-qty-warranty')||'';
+      store=g('gr-qty-store')||'';
       const units=load('nx_units')||[];
       let ctr=units.length+1;
       const pfxMap={tablet:'T',battery:'B',sim:'S',led:'L',router:'R',switching:'SW',board:'BD',poe:'POE',computer:'PC',other:'X'};
@@ -1110,12 +1290,20 @@ function saveGR(){
       person=g('gr-person-serial');
       detail=g('gr-serial-detail');
       pin=g('gr-sn-pin')||'';
+      anydesk=g('gr-sn-anydesk')||'';
+      brand=g('gr-sn-brand')||'';
+      model=g('gr-sn-model')||'';
+      imei1=g('gr-sn-imei1')||'';
+      imei2=g('gr-sn-imei2')||'';
+      warranty=g('gr-sn-warranty')||'';
+      store=g('gr-sn-store')||'';
     }
     const units=load('nx_units')||[];
     let ctr=units.length+1;
     const newUnits=serials.map(sn=>({
       id:'U'+String(ctr++).padStart(3,'0'),
-      product_id:pid,serial:sn,detail,pin,status:'in_stock',person,project_id:null,date_in:date,notes
+      product_id:pid,serial:sn,detail,pin,anydesk,brand,model,imei1,imei2,warranty,store,
+      status:'in_stock',person,project_id:null,date_in:date,notes
     }));
     save('nx_units',[...units,...newUnits]);
     newUnits.forEach(u=>{
@@ -1136,6 +1324,206 @@ function saveGR(){
     toast(`📥 รับเข้า ${total} ${prod.unit||'ชิ้น'} ✅`);
   }
   closeModal('modal-gr');renderPage(currentPage);
+}
+
+// ==================== QR CODE ====================
+function getScanUrl(unitId){
+  const base=window.location.origin+window.location.pathname;
+  return `${base}?unit=${unitId}`;
+}
+function openQR(unitId){
+  const units=load('nx_units')||[];
+  const u=units.find(x=>x.id===unitId);if(!u)return;
+  const prods=load('nx_products')||[];
+  const prod=prods.find(p=>p.id===u.product_id)||{};
+  const projs=load('nx_projects')||[];
+  const proj=projs.find(p=>p.id===u.project_id);
+  const cat=CATS[prod.category]||{icon:'📦'};
+
+  // QR = URL that opens scan page for this unit
+  const lines=getScanUrl(unitId);
+
+  // Render modal
+  openModal('modal-qr');
+  const canvas=document.getElementById('qr-canvas');
+  canvas.innerHTML='';
+  new QRCode(canvas,{text:lines,width:200,height:200,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+
+  // Info card
+  document.getElementById('qr-info').innerHTML=`
+    <div style="font-weight:700;font-size:15px;margin-bottom:8px">${cat.icon} ${prod.name}</div>
+    ${u.brand||u.model?`<div style="color:var(--muted);margin-bottom:6px">${[u.brand,u.model].filter(Boolean).join(' / ')}</div>`:''}
+    <div>📋 <strong>SKU:</strong> ${prod.sku||prod.id}</div>
+    <div>🔖 <strong>Serial:</strong> ${u.serial||u.id}</div>
+    ${u.imei1?`<div>📱 <strong>IMEI1:</strong> ${u.imei1}</div>`:''}
+    ${u.imei2?`<div>📱 <strong>IMEI2:</strong> ${u.imei2}</div>`:''}
+    ${u.pin?`<div>🔑 <strong>PIN:</strong> ${u.pin}</div>`:''}
+    ${u.anydesk?`<div>🖥️ <strong>Anydesk:</strong> ${u.anydesk}</div>`:''}
+    <div>🟢 <strong>สถานะ:</strong> ${STATUSES[u.status]?.label||u.status}</div>
+    <div>👤 <strong>คนดูแล:</strong> ${u.person||'—'}</div>
+    ${proj?`<div>🏗️ <strong>โครงการ:</strong> ${proj.name}</div>`:''}
+    ${u.warranty?`<div>🛡️ <strong>ประกันหมด:</strong> ${u.warranty}</div>`:''}
+    ${u.store?`<div>🛒 <strong>ซื้อจาก:</strong> ${u.store}</div>`:''}
+    <div style="margin-top:6px;color:var(--muted);font-size:11px">รับเข้า: ${fmtDate(u.date_in)}</div>`;
+}
+function printQR(){
+  const qrEl=document.getElementById('qr-canvas');
+  const infoEl=document.getElementById('qr-info');
+  const w=window.open('','_blank','width=400,height=600');
+  w.document.write(`<html><body style="font-family:sans-serif;padding:20px;text-align:center">
+    <h3 style="margin-bottom:12px">NEXTATE STOCK</h3>
+    ${qrEl.innerHTML}
+    <div style="text-align:left;margin-top:12px;font-size:13px;line-height:1.8">${infoEl.innerHTML}</div>
+    <script>window.print();window.close();<\/script></body></html>`);
+}
+
+// ==================== SCAN LANDING PAGE ====================
+let _scanUnitId='';
+function initScanPage(unitId){
+  _scanUnitId=unitId.trim();
+  document.getElementById('scan-screen').style.display='block';
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('scan-date').value=today();
+  // Wait for Firebase sync — ลองนาน 30 วินาที (60 × 500ms) สำหรับอุปกรณ์ที่ไม่เคย cache มาก่อน
+  let tries=0;
+  const wait=setInterval(()=>{
+    tries++;
+    const units=load('nx_units')||[];
+    const u=units.find(x=>x.id===_scanUnitId);
+    if(u||tries>60){clearInterval(wait);renderScanUnit(_scanUnitId);}
+  },500);
+}
+function renderScanUnit(unitId){
+  const units=load('nx_units')||[];
+  const u=units.find(x=>x.id===unitId);
+  const prods=load('nx_products')||[];
+  const projs=load('nx_projects')||[];
+  const card=document.getElementById('scan-unit-card');
+  const action=document.getElementById('scan-action-section');
+  const syncLabel=document.getElementById('scan-sync-label');
+  if(syncLabel) syncLabel.textContent='✅ ข้อมูลพร้อมใช้งาน';
+
+  if(!u){
+    card.innerHTML=`
+      <div style="text-align:center;padding:24px">
+        <div style="font-size:36px;margin-bottom:10px">❌</div>
+        <div style="font-weight:600;color:var(--red);margin-bottom:6px">ไม่พบข้อมูลอุปกรณ์นี้</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Unit ID: ${unitId}</div>
+        <button class="btn btn-secondary btn-sm" onclick="window.location.href=window.location.pathname">← กลับหน้าหลัก</button>
+      </div>`;
+    if(syncLabel) syncLabel.textContent='❌ ไม่พบข้อมูล';
+    return;
+  }
+  const prod=prods.find(p=>p.id===u.product_id)||{name:'ไม่ทราบ',category:''};
+  const proj=projs.find(p=>p.id===u.project_id);
+  const cat=CATS[prod.category]||{icon:'📦'};
+  const warrantyExpired=u.warranty&&u.warranty<today();
+
+  card.innerHTML=`
+    ${prod.images&&prod.images[0]?`<img src="${prod.images[0]}" style="width:100%;height:160px;object-fit:cover;border-radius:10px;margin-bottom:12px">`:''}
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <span style="font-size:28px">${cat.icon}</span>
+      <div>
+        <div style="font-weight:700;font-size:16px">${prod.name}</div>
+        ${u.brand||u.model?`<div style="font-size:12px;color:var(--muted)">${[u.brand,u.model].filter(Boolean).join(' / ')}</div>`:''}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px">
+      <div style="background:var(--card2);border-radius:8px;padding:10px">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px">SKU</div>
+        <div style="font-weight:600">${prod.sku||prod.id}</div>
+      </div>
+      <div style="background:var(--card2);border-radius:8px;padding:10px">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px">Serial</div>
+        <div style="font-weight:600">${u.serial||u.id}</div>
+      </div>
+      ${u.imei1?`<div style="background:var(--card2);border-radius:8px;padding:10px">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px">IMEI1</div>
+        <div style="font-weight:600;font-size:12px">${u.imei1}</div>
+      </div>`:''}
+      ${u.imei2?`<div style="background:var(--card2);border-radius:8px;padding:10px">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px">IMEI2</div>
+        <div style="font-weight:600;font-size:12px">${u.imei2}</div>
+      </div>`:''}
+      <div style="background:var(--card2);border-radius:8px;padding:10px">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px">สถานะ</div>
+        <div style="font-weight:600">${STATUSES[u.status]?.label||u.status}</div>
+      </div>
+      <div style="background:var(--card2);border-radius:8px;padding:10px">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px">คนดูแล</div>
+        <div style="font-weight:600">${u.person?PERSON_ICON[u.person]+' '+u.person:'—'}</div>
+      </div>
+      ${proj?`<div style="background:var(--card2);border-radius:8px;padding:10px;grid-column:1/-1">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px">โครงการปัจจุบัน</div>
+        <div style="font-weight:600">🏗️ ${proj.name}</div>
+      </div>`:''}
+      ${u.warranty?`<div style="background:${warrantyExpired?'rgba(239,68,68,.1)':'var(--card2)'};border-radius:8px;padding:10px;grid-column:1/-1">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px">วันหมดประกัน</div>
+        <div style="font-weight:600;color:${warrantyExpired?'var(--red)':'var(--text)'}">${u.warranty} ${warrantyExpired?'⚠️ หมดแล้ว':''}</div>
+      </div>`:''}
+      ${u.store?`<div style="background:var(--card2);border-radius:8px;padding:10px">
+        <div style="color:var(--muted);font-size:10px;margin-bottom:3px">ซื้อจาก</div>
+        <div style="font-weight:600">${u.store}</div>
+      </div>`:''}
+    </div>`;
+
+  // Load projects into scan dropdown
+  const projSel=document.getElementById('scan-project');
+  projSel.innerHTML='<option value="">— เลือกโครงการ —</option>'+projs.map(p=>`<option value="${p.id}">${p.status==='done'?'✅ ':'🏗️ '}${p.name}</option>`).join('');
+
+  // Show action section based on status
+  action.style.display='block';
+  document.getElementById('scan-gi-form').style.display='none';
+  document.getElementById('scan-deployed-msg').style.display='none';
+  document.getElementById('scan-repair-msg').style.display='none';
+  if(u.status==='in_stock'){
+    document.getElementById('scan-gi-form').style.display='block';
+  } else if(u.status==='deployed'){
+    const d=document.getElementById('scan-deployed-msg');
+    d.style.display='block';
+    document.getElementById('scan-deployed-detail').textContent=`โครงการ: ${proj?.name||'—'} · คนดูแล: ${u.person||'—'}`;
+  } else if(u.status==='repair'){
+    document.getElementById('scan-repair-msg').style.display='block';
+  }
+}
+function getScanGps(){
+  const st=document.getElementById('scan-gps-status');
+  if(!navigator.geolocation){if(st)st.textContent='ไม่รองรับ GPS';return;}
+  if(st)st.textContent='⏳ กำลังระบุ...';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    document.getElementById('scan-lat').value=pos.coords.latitude.toFixed(6);
+    document.getElementById('scan-lng').value=pos.coords.longitude.toFixed(6);
+    if(st)st.textContent=`✅ ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+  },()=>{if(st)st.textContent='❌ ระบุตำแหน่งไม่ได้';});
+}
+function submitScanGI(){
+  const unitId=_scanUnitId;
+  const person=document.getElementById('scan-person').value;
+  const projId=document.getElementById('scan-project').value;
+  if(!person){toast('⚠️ กรุณาเลือกผู้รับอุปกรณ์');return;}
+  if(!projId){toast('⚠️ กรุณาเลือกโครงการก่อน');return;}
+  const units=load('nx_units')||[];
+  const u=units.find(x=>x.id===unitId);if(!u)return;
+  const prods=load('nx_products')||[];
+  const prod=prods.find(p=>p.id===u.product_id)||{};
+  const projs=load('nx_projects')||[];
+  const proj=projs.find(p=>p.id===projId);
+  const date=document.getElementById('scan-date').value||today();
+  const notes=document.getElementById('scan-notes').value;
+  const locName=document.getElementById('scan-loc-name').value;
+  const lat=document.getElementById('scan-lat').value;
+  const lng=document.getElementById('scan-lng').value;
+  const location={name:locName,lat,lng};
+  const mvs=load('nx_movements')||[];
+  const idx=units.findIndex(x=>x.id===unitId);
+  if(idx>-1){units[idx].status='deployed';units[idx].person=person;units[idx].project_id=projId;units[idx].date_used=date;}
+  mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date,type:'GI',product_id:u.product_id,product_name:prod.name,unit_id:unitId,serial:u.serial||'',qty:1,person,project_id:projId,project_name:proj?.name||'',location,notes,created_by:person+'(scan)'});
+  save('nx_units',units);
+  save('nx_movements',mvs);
+  // Show success
+  document.getElementById('scan-gi-form').style.display='none';
+  document.getElementById('scan-success').style.display='block';
+  document.getElementById('scan-success-msg').textContent=`${prod.name} (${u.serial||unitId}) เบิกออกไปโครงการ "${proj?.name||projId}" แล้ว`;
 }
 
 // ==================== GPS LOCATION ====================
@@ -1354,9 +1742,11 @@ function productForm(v={}){
     <div class="form-group"><label class="lbl">SKU <span style="font-size:10px;color:var(--muted)">(auto)</span></label><input id="pf-sku" value="${sku}" placeholder="จะสร้างอัตโนมัติ..."></div>
     <div class="form-group"><label class="lbl">ติดตาม</label>
       <select id="pf-serial"><option value="1" ${v.is_serial?'selected':''}>รายเครื่อง (Serial)</option><option value="0" ${!v.is_serial?'selected':''}>จำนวน (Bulk)</option></select></div>
+    <div class="form-group"><label class="lbl">ประเภทการติดตั้ง</label>
+      <select id="pf-install"><option value="" ${!v.install_type?'selected':''}>— ไม่ระบุ —</option><option value="LPR" ${v.install_type==='LPR'?'selected':''}>📷 LPR</option><option value="non-LPR" ${v.install_type==='non-LPR'?'selected':''}>🔧 non-LPR</option></select></div>
     <div class="form-group"><label class="lbl">หน่วย</label><input id="pf-unit" value="${v.unit||'ชิ้น'}"></div>
     <div class="form-group"><label class="lbl">จำนวนขั้นต่ำ</label><input type="number" id="pf-min" value="${v.min_qty||0}" min="0"></div>
-    <div class="form-group form-full"><label class="lbl">หมายเหตุ</label><input id="pf-notes" value="${v.notes||''}"></div>
+    <div class="form-group form-full"><label class="lbl">หมายเหตุ / Spec (RAM, CPU, ขนาด...)</label><input id="pf-notes" value="${v.notes||''}" placeholder="เช่น RAM 4GB, CPU Snapdragon 730, จอ 10.4 นิ้ว"></div>
     <div class="form-group form-full">
       <label class="lbl">รูปสินค้า (สูงสุด 2 รูป)</label>
       <div id="pf-img-preview" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">${imgPreviews}</div>
@@ -1422,7 +1812,7 @@ function saveProduct(){
   const prods=load('nx_products')||[];
   const cat=g('pf-cat');
   let sku=g('pf-sku')||genSKU(cat);
-  const obj={name,category:cat,sku,is_serial:g('pf-serial')==='1',unit:g('pf-unit')||'ชิ้น',min_qty:parseInt(g('pf-min'))||0,notes:g('pf-notes'),images:_pfImages};
+  const obj={name,category:cat,sku,is_serial:g('pf-serial')==='1',install_type:g('pf-install')||'',unit:g('pf-unit')||'ชิ้น',min_qty:parseInt(g('pf-min'))||0,notes:g('pf-notes'),images:_pfImages};
   if(_formAction==='edit-product'){const idx=prods.findIndex(p=>p.id===_editId);if(idx>-1) prods[idx]={...prods[idx],...obj};}
   else {obj.id=genId('P',prods);prods.push(obj);}
   save('nx_products',prods);_pfImages=[];closeModal('modal-form');toast('บันทึกแล้ว ✅');renderPage(currentPage);
@@ -1536,9 +1926,16 @@ function startApp(){
     measurementId:"G-JFETKBQXM3"
   };
   try{initFirebase(DEFAULT_FB_CFG);}catch(e){setSyncStatus('error');}
-  const user=localStorage.getItem('nx_user');
-  if(!user){document.getElementById('login-screen').style.display='flex';}
-  else{startApp();}
+  // ตรวจ URL parameter ?unit= สำหรับ QR scan flow
+  const urlParams=new URLSearchParams(window.location.search);
+  const scanUnit=urlParams.get('unit')?.trim();
+  if(scanUnit){
+    initScanPage(scanUnit);
+  } else {
+    const user=localStorage.getItem('nx_user');
+    if(!user){document.getElementById('login-screen').style.display='flex';}
+    else{startApp();}
+  }
 })();
 </script>
 </body>
