@@ -213,8 +213,8 @@ tr:hover td{background:rgba(79,142,247,.04)}
             <select id="scan-project"><option value="">— เลือกโครงการ —</option></select>
           </div>
           <div class="form-group form-full">
-            <label class="lbl">ชื่อสถานที่ / ที่อยู่</label>
-            <input id="scan-loc-name" placeholder="เช่น โครงการ ABC อ.เมือง จ.ขอนแก่น">
+            <label class="lbl">รหัส Anydesk (ถ้ามี)</label>
+            <input id="scan-anydesk" placeholder="เช่น 123 456 789">
           </div>
           <div class="form-group">
             <label class="lbl">Latitude</label>
@@ -354,10 +354,6 @@ tr:hover td{background:rgba(79,142,247,.04)}
               <input id="gr-qty-pin" placeholder="เช่น 1234 หรือปล่อยว่าง">
             </div>
             <div class="form-group">
-              <label class="lbl">รหัส Anydesk</label>
-              <input id="gr-qty-anydesk" placeholder="เช่น 123 456 789">
-            </div>
-            <div class="form-group">
               <label class="lbl">ยี่ห้อ</label>
               <input id="gr-qty-brand" placeholder="เช่น Samsung, Huawei">
             </div>
@@ -407,10 +403,6 @@ tr:hover td{background:rgba(79,142,247,.04)}
             <div class="form-group">
               <label class="lbl">PIN / รหัสผ่าน</label>
               <input id="gr-sn-pin" placeholder="เช่น 1234 หรือปล่อยว่าง">
-            </div>
-            <div class="form-group">
-              <label class="lbl">รหัส Anydesk</label>
-              <input id="gr-sn-anydesk" placeholder="เช่น 123 456 789">
             </div>
             <div class="form-group">
               <label class="lbl">ยี่ห้อ</label>
@@ -507,14 +499,11 @@ tr:hover td{background:rgba(79,142,247,.04)}
         </div>
       </div>
       <div class="divider"></div>
+      <div class="form-group"><label class="lbl">รหัส Anydesk</label><input id="gi-anydesk" placeholder="เช่น 123 456 789"></div>
       <div class="form-group"><label class="lbl">หมายเหตุ</label><input id="gi-notes" placeholder="จุดประสงค์การใช้..."></div>
       <div class="divider"></div>
-      <div class="lbl" style="margin-bottom:10px">📍 สถานที่ติดตั้ง</div>
+      <div class="lbl" style="margin-bottom:10px">📍 พิกัด GPS (ถ้ามี)</div>
       <div class="form-grid">
-        <div class="form-group form-full">
-          <label class="lbl">ชื่อสถานที่ / ที่อยู่</label>
-          <input id="gi-loc-name" placeholder="เช่น โครงการ ABC ต.นาดี อ.เมือง จ.ขอนแก่น">
-        </div>
         <div class="form-group">
           <label class="lbl">Latitude</label>
           <input type="number" id="gi-lat" step="any" placeholder="เช่น 16.4322">
@@ -1270,7 +1259,7 @@ function saveGR(){
       person=g('gr-person-qty');
       detail=g('gr-qty-detail');
       pin=g('gr-qty-pin')||'';
-      anydesk=g('gr-qty-anydesk')||'';
+      anydesk='';
       brand=g('gr-qty-brand')||'';
       model=g('gr-qty-model')||'';
       imei1=g('gr-qty-imei1')||'';
@@ -1290,7 +1279,7 @@ function saveGR(){
       person=g('gr-person-serial');
       detail=g('gr-serial-detail');
       pin=g('gr-sn-pin')||'';
-      anydesk=g('gr-sn-anydesk')||'';
+      anydesk='';
       brand=g('gr-sn-brand')||'';
       model=g('gr-sn-model')||'';
       imei1=g('gr-sn-imei1')||'';
@@ -1510,13 +1499,13 @@ function submitScanGI(){
   const proj=projs.find(p=>p.id===projId);
   const date=document.getElementById('scan-date').value||today();
   const notes=document.getElementById('scan-notes').value;
-  const locName=document.getElementById('scan-loc-name').value;
+  const anydesk=document.getElementById('scan-anydesk').value||'';
   const lat=document.getElementById('scan-lat').value;
   const lng=document.getElementById('scan-lng').value;
-  const location={name:locName,lat,lng};
+  const location={lat,lng};
   const mvs=load('nx_movements')||[];
   const idx=units.findIndex(x=>x.id===unitId);
-  if(idx>-1){units[idx].status='deployed';units[idx].person=person;units[idx].project_id=projId;units[idx].date_used=date;}
+  if(idx>-1){units[idx].status='deployed';units[idx].person=person;units[idx].project_id=projId;units[idx].date_used=date;if(anydesk)units[idx].anydesk=anydesk;}
   mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date,type:'GI',product_id:u.product_id,product_name:prod.name,unit_id:unitId,serial:u.serial||'',qty:1,person,project_id:projId,project_name:proj?.name||'',location,notes,created_by:person+'(scan)'});
   save('nx_units',units);
   save('nx_movements',mvs);
@@ -1588,7 +1577,7 @@ function openGI(presetProductId){
   document.getElementById('gi-project').innerHTML='<option value="">— เลือกโครงการ —</option>'+projs.map(p=>`<option value="${p.id}">${p.status==='done'?'✅ ':'🏗️ '}${p.name}</option>`).join('');
   document.getElementById('gi-product').innerHTML=prods.map(p=>`<option value="${p.id}" ${p.id===presetProductId?'selected':''}>${CATS[p.category]?.icon||'📦'} ${p.name}</option>`).join('');
   document.getElementById('gi-notes').value='';
-  document.getElementById('gi-loc-name').value='';
+  document.getElementById('gi-anydesk').value='';
   document.getElementById('gi-lat').value='';
   document.getElementById('gi-lng').value='';
   const gst=document.getElementById('gi-gps-status');if(gst)gst.textContent='';
@@ -1628,10 +1617,10 @@ function saveGI(){
   const person=g('gi-person');
   const date=g('gi-date')||today();
   const notes=g('gi-notes');
-  const locName=g('gi-loc-name')||'';
+  const anydesk=g('gi-anydesk')||'';
   const lat=g('gi-lat')||'';
   const lng=g('gi-lng')||'';
-  const location={name:locName,lat,lng};
+  const location={lat,lng};
   const mvs=load('nx_movements')||[];
 
   if(prod.is_serial){
@@ -1640,7 +1629,7 @@ function saveGI(){
     const units=load('nx_units')||[];
     checked.forEach(uid=>{
       const idx=units.findIndex(u=>u.id===uid);
-      if(idx>-1){ units[idx].status='deployed';units[idx].person=person;units[idx].project_id=projId;units[idx].date_used=date; }
+      if(idx>-1){ units[idx].status='deployed';units[idx].person=person;units[idx].project_id=projId;units[idx].date_used=date;if(anydesk)units[idx].anydesk=anydesk; }
       const u=units[idx]||{};
       mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date,type:'GI',product_id:pid,product_name:prod.name,unit_id:uid,serial:u.serial||'',qty:1,person,project_id:projId,project_name:proj?.name||'',location,notes,created_by:currentUser()});
     });
