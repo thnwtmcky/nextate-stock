@@ -102,10 +102,26 @@ tr:hover td{background:rgba(79,142,247,.04)}
 .login-card{background:var(--sidebar);border:1px solid var(--border);border-radius:20px;padding:36px;max-width:420px;width:100%;margin:0 16px;text-align:center}
 .login-logo{width:56px;height:56px;background:linear-gradient(135deg,#4f8ef7,#7c3aed);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:#fff;margin:0 auto 16px}
 .login-title{font-size:22px;font-weight:700;margin-bottom:4px}
-.login-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
 .login-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .login-btn{padding:14px;border-radius:14px;border:1px solid var(--border);background:var(--card2);color:var(--text);cursor:pointer;font-size:15px;font-weight:600;transition:.15s;font-family:inherit}
 .login-btn:hover{background:var(--border);border-color:var(--accent);color:var(--accent)}
+.login-input{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;font-size:14px;outline:none;font-family:inherit;margin-bottom:10px;text-align:center}
+.login-input:focus{border-color:var(--accent)}
+.login-submit{width:100%;padding:13px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit;margin-top:6px}
+.login-submit:hover{background:#3d7de8}
+.login-submit:disabled{opacity:.5;cursor:wait}
+.login-link{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:8px;margin-top:8px;font-family:inherit;text-decoration:underline}
+.login-link:hover{color:var(--accent)}
+.login-error{color:var(--red);font-size:12px;margin-top:10px;min-height:16px}
+.login-greet{font-size:18px;font-weight:600;margin-bottom:6px}
+.login-greet .uname{color:var(--accent)}
+/* User menu */
+.user-menu-list{display:flex;flex-direction:column;gap:8px}
+.user-menu-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card2);border:1px solid var(--border);border-radius:12px;cursor:pointer;font-size:14px;color:var(--text);font-family:inherit;text-align:left;transition:.15s}
+.user-menu-btn:hover{border-color:var(--accent);background:rgba(79,142,247,.08)}
+.user-menu-btn .mi{font-size:18px;width:24px;text-align:center}
+.user-menu-btn.danger:hover{border-color:var(--red);color:var(--red)}
 /* Toast */
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#e2e8f0;padding:10px 20px;border-radius:12px;font-size:13px;z-index:9999;display:none;border:1px solid var(--border);white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 /* Confirm */
@@ -164,13 +180,38 @@ tr:hover td{background:rgba(79,142,247,.04)}
   <div class="login-card">
     <div class="login-logo">N</div>
     <div class="login-title">NEXTATE Stock</div>
-    <div class="login-sub">เลือกชื่อของคุณเพื่อเข้าใช้งาน</div>
-    <div class="login-btns">
-      <button class="login-btn" onclick="selectUser('mic')">👤 mic</button>
-      <button class="login-btn" onclick="selectUser('mac')">👤 mac</button>
-      <button class="login-btn" onclick="selectUser('donut')">🍩 donut</button>
-      <button class="login-btn" onclick="selectUser('aon')">👤 aon</button>
+
+    <!-- Step 1: pick user -->
+    <div id="login-step-pick">
+      <div class="login-sub">เลือกชื่อของคุณเพื่อเข้าใช้งาน</div>
+      <div class="login-btns">
+        <button class="login-btn" onclick="pickUser('mic')">👤 mic</button>
+        <button class="login-btn" onclick="pickUser('mac')">👤 mac</button>
+        <button class="login-btn" onclick="pickUser('donut')">🍩 donut</button>
+        <button class="login-btn" onclick="pickUser('aon')">👤 aon</button>
+      </div>
     </div>
+
+    <!-- Step 2: enter password -->
+    <div id="login-step-password" style="display:none">
+      <div class="login-greet">👋 สวัสดี <span class="uname" id="login-username"></span></div>
+      <div class="login-sub">กรอกรหัสผ่านเพื่อเข้าสู่ระบบ</div>
+      <input type="password" id="login-pwd" class="login-input" placeholder="รหัสผ่าน" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitLogin()">
+      <button class="login-submit" id="login-submit-btn" onclick="submitLogin()">🔐 เข้าสู่ระบบ</button>
+      <button class="login-link" onclick="backToPick()">← เปลี่ยนผู้ใช้</button>
+    </div>
+
+    <!-- Step 3: first-time setup -->
+    <div id="login-step-setup" style="display:none">
+      <div class="login-greet">🔑 ตั้งรหัสผ่าน <span class="uname" id="setup-username"></span></div>
+      <div class="login-sub">ครั้งแรกของคุณ — ตั้งรหัสผ่านเพื่อความปลอดภัย<br>(อย่างน้อย 4 ตัวอักษร)</div>
+      <input type="password" id="setup-pwd" class="login-input" placeholder="รหัสผ่านใหม่" autocomplete="new-password">
+      <input type="password" id="setup-pwd2" class="login-input" placeholder="ยืนยันรหัสผ่าน" autocomplete="new-password" onkeydown="if(event.key==='Enter')submitSetup()">
+      <button class="login-submit" id="setup-submit-btn" onclick="submitSetup()">💾 บันทึก & เข้าใช้งาน</button>
+      <button class="login-link" onclick="backToPick()">← ยกเลิก</button>
+    </div>
+
+    <div class="login-error" id="login-error"></div>
   </div>
 </div>
 
@@ -293,7 +334,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
     <div class="topbar-title"><h1 id="page-title">Dashboard</h1><p id="page-sub">NEXTATE Stock v2</p></div>
     <div class="topbar-actions">
       <div id="sync-dot" title="ออฟไลน์"></div>
-      <span id="user-chip" onclick="changeUser()"></span>
+      <span id="user-chip" onclick="openUserMenu()"></span>
     </div>
   </div>
   <div id="page"></div>
@@ -601,6 +642,52 @@ tr:hover td{background:rgba(79,142,247,.04)}
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-qr')">ปิด</button>
       <button class="btn btn-primary" onclick="printQR()">🖨️ พิมพ์</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: User Menu ===== -->
+<div class="modal-overlay" id="modal-user">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-header">
+      <h2 id="user-menu-title">👤 บัญชีของฉัน</h2>
+      <button class="modal-close" onclick="closeModal('modal-user')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="user-menu-info" style="text-align:center;padding:8px 0 18px;color:var(--muted);font-size:12px"></div>
+      <div class="user-menu-list">
+        <button class="user-menu-btn" onclick="openChangePassword()"><span class="mi">🔑</span><div><div style="font-weight:600">เปลี่ยนรหัสผ่าน</div><div style="font-size:11px;color:var(--muted)">อัปเดตรหัสผ่านบัญชีของคุณ</div></div></button>
+        <button class="user-menu-btn danger" onclick="doLogout()"><span class="mi">🚪</span><div><div style="font-weight:600">ออกจากระบบ</div><div style="font-size:11px;color:var(--muted)">กลับไปหน้าเข้าสู่ระบบ</div></div></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL: Change Password ===== -->
+<div class="modal-overlay" id="modal-changepwd">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <h2>🔑 เปลี่ยนรหัสผ่าน</h2>
+      <button class="modal-close" onclick="closeModal('modal-changepwd')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="lbl">รหัสผ่านปัจจุบัน</label>
+        <input type="password" id="cp-old" placeholder="รหัสผ่านเดิม" autocomplete="current-password">
+      </div>
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="lbl">รหัสผ่านใหม่</label>
+        <input type="password" id="cp-new" placeholder="อย่างน้อย 4 ตัวอักษร" autocomplete="new-password">
+      </div>
+      <div class="form-group" style="margin-bottom:6px">
+        <label class="lbl">ยืนยันรหัสผ่านใหม่</label>
+        <input type="password" id="cp-new2" placeholder="พิมพ์รหัสผ่านใหม่อีกครั้ง" autocomplete="new-password" onkeydown="if(event.key==='Enter')submitChangePassword()">
+      </div>
+      <div id="cp-error" class="login-error"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-changepwd')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="submitChangePassword()">💾 บันทึก</button>
     </div>
   </div>
 </div>
@@ -1373,6 +1460,9 @@ function initScanPage(unitId){
   document.getElementById('scan-screen').style.display='block';
   document.getElementById('login-screen').style.display='none';
   document.getElementById('scan-date').value=today();
+  // Auto-fill scan person with the currently logged-in user
+  const sp=document.getElementById('scan-person');
+  if(sp){ const u=currentUser(); if(ALLOWED_USERS.includes(u)) sp.value=u; }
   // Wait for Firebase sync — ลองนาน 30 วินาที (60 × 500ms) สำหรับอุปกรณ์ที่ไม่เคย cache มาก่อน
   let tries=0;
   const wait=setInterval(()=>{
@@ -1868,20 +1958,228 @@ function saveUnitStatus(){
   closeModal('modal-form');toast('อัปเดตแล้ว ✅');renderPage(currentPage);
 }
 
-// ==================== USER ====================
-function currentUser(){return localStorage.getItem('nx_user')||'Admin';}
-function selectUser(name){
-  localStorage.setItem('nx_user',name);
-  document.getElementById('login-screen').style.display='none';
-  startApp();
+// ==================== AUTH ====================
+const SESSION_HOURS = 24;
+const ALLOWED_USERS = ['mic','mac','donut','aon'];
+let _usersCache = null;
+let _pickedUser = null;
+
+function loadUsers(){
+  if(_usersCache) return _usersCache;
+  try{ const raw=localStorage.getItem('nx_users'); _usersCache=raw?JSON.parse(raw):{}; }
+  catch(e){ _usersCache={}; }
+  return _usersCache;
 }
-function changeUser(){localStorage.removeItem('nx_user');location.reload();}
+function saveUsers(users){
+  _usersCache=users;
+  localStorage.setItem('nx_users',JSON.stringify(users));
+  if(db){ db.ref('nextate/nx_users').set(users).catch(e=>console.error(e)); }
+}
+function genSalt(){
+  const arr=new Uint8Array(16);crypto.getRandomValues(arr);
+  return Array.from(arr).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function hashPassword(password,salt){
+  const data=new TextEncoder().encode(password+':'+salt);
+  const buf=await crypto.subtle.digest('SHA-256',data);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function registerPassword(username,password){
+  const users=loadUsers();
+  const salt=genSalt();
+  const hash=await hashPassword(password,salt);
+  users[username]={salt,hash,createdAt:users[username]?.createdAt||Date.now(),lastLogin:Date.now()};
+  saveUsers(users);
+}
+async function verifyPassword(username,password){
+  const u=loadUsers()[username];
+  if(!u||!u.hash||!u.salt) return false;
+  const hash=await hashPassword(password,u.salt);
+  return hash===u.hash;
+}
+function userHasPassword(username){
+  const u=loadUsers()[username];
+  return !!(u&&u.hash&&u.salt);
+}
+function touchLastLogin(username){
+  const users=loadUsers();
+  if(users[username]){ users[username].lastLogin=Date.now(); saveUsers(users); }
+}
+
+// ==================== SESSION ====================
+function setSession(username){
+  const session={user:username,expiresAt:Date.now()+SESSION_HOURS*3600*1000};
+  localStorage.setItem('nx_session',JSON.stringify(session));
+}
+function getSession(){
+  try{
+    const raw=localStorage.getItem('nx_session');if(!raw) return null;
+    const s=JSON.parse(raw);
+    if(!s.expiresAt||s.expiresAt<Date.now()){ localStorage.removeItem('nx_session'); return null; }
+    return s;
+  }catch(e){ return null; }
+}
+function clearSession(){
+  localStorage.removeItem('nx_session');
+  localStorage.removeItem('nx_user'); // legacy
+}
+function currentUser(){
+  const s=getSession();
+  return s?s.user:'Admin';
+}
+
+// ==================== LOGIN FLOW ====================
+function showLoginError(msg){
+  const el=document.getElementById('login-error');if(el) el.textContent=msg||'';
+}
+function showLoginStep(step){
+  ['pick','password','setup'].forEach(s=>{
+    const el=document.getElementById('login-step-'+s);
+    if(el) el.style.display=(s===step)?'block':'none';
+  });
+  showLoginError('');
+}
+async function refreshUsersFromCloud(){
+  if(!db) return;
+  try{
+    const snap=await db.ref('nextate/nx_users').once('value');
+    const val=snap.val();
+    if(val && typeof val==='object'){
+      _usersCache=val;
+      localStorage.setItem('nx_users',JSON.stringify(val));
+    }
+  }catch(e){console.error(e);}
+}
+async function pickUser(name){
+  if(!ALLOWED_USERS.includes(name)){ showLoginError('ผู้ใช้ไม่ถูกต้อง'); return; }
+  _pickedUser=name;
+  showLoginError('⏳ กำลังตรวจสอบ...');
+  await refreshUsersFromCloud();
+  showLoginError('');
+  if(userHasPassword(name)){
+    document.getElementById('login-username').textContent=name;
+    document.getElementById('login-pwd').value='';
+    showLoginStep('password');
+    setTimeout(()=>document.getElementById('login-pwd').focus(),50);
+  } else {
+    document.getElementById('setup-username').textContent=name;
+    document.getElementById('setup-pwd').value='';
+    document.getElementById('setup-pwd2').value='';
+    showLoginStep('setup');
+    setTimeout(()=>document.getElementById('setup-pwd').focus(),50);
+  }
+}
+function backToPick(){
+  _pickedUser=null;
+  showLoginStep('pick');
+}
+async function submitLogin(){
+  if(!_pickedUser) return;
+  const pwd=document.getElementById('login-pwd').value;
+  if(!pwd){ showLoginError('กรุณากรอกรหัสผ่าน'); return; }
+  const btn=document.getElementById('login-submit-btn');
+  btn.disabled=true;btn.textContent='⏳ กำลังตรวจสอบ...';
+  try{
+    const ok=await verifyPassword(_pickedUser,pwd);
+    if(!ok){
+      showLoginError('❌ รหัสผ่านไม่ถูกต้อง');
+      btn.disabled=false;btn.textContent='🔐 เข้าสู่ระบบ';
+      document.getElementById('login-pwd').select();
+      return;
+    }
+    touchLastLogin(_pickedUser);
+    setSession(_pickedUser);
+    document.getElementById('login-screen').style.display='none';
+    afterLogin();
+  }catch(e){
+    showLoginError('เกิดข้อผิดพลาด: '+e.message);
+    btn.disabled=false;btn.textContent='🔐 เข้าสู่ระบบ';
+  }
+}
+async function submitSetup(){
+  if(!_pickedUser) return;
+  const p1=document.getElementById('setup-pwd').value;
+  const p2=document.getElementById('setup-pwd2').value;
+  if(!p1||p1.length<4){ showLoginError('รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร'); return; }
+  if(p1!==p2){ showLoginError('รหัสผ่านทั้งสองครั้งไม่ตรงกัน'); return; }
+  const btn=document.getElementById('setup-submit-btn');
+  btn.disabled=true;btn.textContent='⏳ กำลังบันทึก...';
+  try{
+    // Safety: re-check cloud right before write to avoid overwriting an existing account
+    await refreshUsersFromCloud();
+    if(userHasPassword(_pickedUser)){
+      showLoginError('⚠️ บัญชีนี้มีรหัสผ่านแล้ว — กรุณาเข้าสู่ระบบ');
+      btn.disabled=false;btn.textContent='💾 บันทึก & เข้าใช้งาน';
+      setTimeout(()=>{ document.getElementById('login-username').textContent=_pickedUser; showLoginStep('password'); },1200);
+      return;
+    }
+    await registerPassword(_pickedUser,p1);
+    setSession(_pickedUser);
+    document.getElementById('login-screen').style.display='none';
+    toast('✅ ตั้งรหัสผ่านสำเร็จ');
+    afterLogin();
+  }catch(e){
+    showLoginError('เกิดข้อผิดพลาด: '+e.message);
+    btn.disabled=false;btn.textContent='💾 บันทึก & เข้าใช้งาน';
+  }
+}
+function showLogin(){
+  _pickedUser=null;
+  document.getElementById('login-screen').style.display='flex';
+  showLoginStep('pick');
+}
+
+// ==================== USER MENU ====================
+function openUserMenu(){
+  const user=currentUser();
+  const info=document.getElementById('user-menu-info');
+  const u=loadUsers()[user];
+  const last=u?.lastLogin?new Date(u.lastLogin).toLocaleString('th-TH'):'-';
+  info.innerHTML=`<div style="font-size:15px;color:var(--text);font-weight:600;margin-bottom:4px">${PERSON_ICON[user]||'👤'} ${user}</div>เข้าใช้ล่าสุด: ${last}`;
+  openModal('modal-user');
+}
+function doLogout(){
+  closeModal('modal-user');
+  showConfirm('ออกจากระบบ?','คุณจะต้องเข้าสู่ระบบใหม่อีกครั้ง',()=>{
+    clearSession();
+    location.reload();
+  },'ออกจากระบบ');
+}
+function openChangePassword(){
+  closeModal('modal-user');
+  ['cp-old','cp-new','cp-new2'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('cp-error').textContent='';
+  openModal('modal-changepwd');
+  setTimeout(()=>document.getElementById('cp-old').focus(),100);
+}
+async function submitChangePassword(){
+  const err=document.getElementById('cp-error');err.textContent='';
+  const oldp=document.getElementById('cp-old').value;
+  const newp=document.getElementById('cp-new').value;
+  const newp2=document.getElementById('cp-new2').value;
+  if(!oldp){ err.textContent='กรุณากรอกรหัสผ่านปัจจุบัน'; return; }
+  if(!newp||newp.length<4){ err.textContent='รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัวอักษร'; return; }
+  if(newp!==newp2){ err.textContent='รหัสผ่านใหม่ทั้งสองครั้งไม่ตรงกัน'; return; }
+  if(oldp===newp){ err.textContent='รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม'; return; }
+  const user=currentUser();
+  const ok=await verifyPassword(user,oldp);
+  if(!ok){ err.textContent='❌ รหัสผ่านปัจจุบันไม่ถูกต้อง'; return; }
+  await registerPassword(user,newp);
+  closeModal('modal-changepwd');
+  toast('✅ เปลี่ยนรหัสผ่านสำเร็จ');
+}
 
 // ==================== BOOT ====================
+function afterLogin(){
+  const urlParams=new URLSearchParams(window.location.search);
+  const scanUnit=urlParams.get('unit')?.trim();
+  if(scanUnit){ initScanPage(scanUnit); }
+  else { startApp(); }
+}
 function startApp(){
   const chip=document.getElementById('user-chip');
   const user=currentUser();
-  chip.textContent=PERSON_ICON[user]||'👤'+' '+user;
+  chip.textContent=(PERSON_ICON[user]||'👤')+' '+user;
   chip.style.display='inline-block';
   // Seed initial products if none
   if(!(load('nx_products')||[]).length){
@@ -1915,16 +2213,22 @@ function startApp(){
     measurementId:"G-JFETKBQXM3"
   };
   try{initFirebase(DEFAULT_FB_CFG);}catch(e){setSyncStatus('error');}
-  // ตรวจ URL parameter ?unit= สำหรับ QR scan flow
-  const urlParams=new URLSearchParams(window.location.search);
-  const scanUnit=urlParams.get('unit')?.trim();
-  if(scanUnit){
-    initScanPage(scanUnit);
-  } else {
-    const user=localStorage.getItem('nx_user');
-    if(!user){document.getElementById('login-screen').style.display='flex';}
-    else{startApp();}
+  // Listen for nx_users sync (kept outside DB_KEYS so "clear data" doesn't wipe accounts)
+  if(db){
+    try{
+      db.ref('nextate/nx_users').on('value',snap=>{
+        const val=snap.val();
+        if(val && typeof val==='object'){
+          _usersCache=val;
+          localStorage.setItem('nx_users',JSON.stringify(val));
+        }
+      });
+    }catch(e){console.error(e);}
   }
+  loadUsers();
+  // Require login for all flows (scan included) for security
+  if(getSession()){ afterLogin(); }
+  else { showLogin(); }
 })();
 </script>
 </body>
