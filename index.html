@@ -3,26 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="theme-color" content="#0f1117">
+<meta name="theme-color" content="#ffffff">
 <title>NEXTATE · Stock v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#0f1117;--sidebar:#161b27;--card:#1e2535;--card2:#252d3d;--border:#2a3347;--text:#e2e8f0;--muted:#8892a4;--accent:#4f8ef7;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--purple:#a78bfa;--teal:#14b8a6;--sw:240px;--topbar:60px}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;overflow-x:hidden}
+:root{--bg:#f6f8fb;--sidebar:#ffffff;--card:#ffffff;--card2:#f1f4f9;--border:#e4e8f0;--text:#1d2533;--muted:#6c7689;--accent:#2b5fb3;--accent-hover:#234e95;--accent-soft:#eaf0fa;--accent-line:#d4e0f4;--green:#1f9d62;--green-soft:#e7f5ee;--red:#d24b4b;--red-soft:#fae9e9;--yellow:#c4881a;--yellow-soft:#fbf2e0;--purple:#7c5fce;--teal:#12998c;--shadow:0 1px 2px rgba(22,34,57,.04),0 4px 16px rgba(22,34,57,.05);--shadow-sm:0 1px 2px rgba(22,34,57,.05);--sw:248px;--topbar:62px}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter','Noto Sans Thai','Segoe UI',system-ui,sans-serif;font-size:14px;overflow-x:hidden;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 #sidebar{width:var(--sw);background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:200;transition:transform .28s cubic-bezier(.4,0,.2,1)}
-#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190;backdrop-filter:blur(2px)}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(22,34,57,.35);z-index:190;backdrop-filter:blur(2px)}
 .logo{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0}
-.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#4f8ef7,#7c3aed);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:15px;flex-shrink:0}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#2b5fb3,#1e3f7a);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:15px;flex-shrink:0}
 .logo-text{font-weight:700;font-size:15px}.logo-sub{font-size:10px;color:var(--muted)}
 nav{flex:1;padding:8px 0 80px}
 .nav-section{padding:10px 16px 4px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;color:var(--muted);transition:.15s;font-size:13px;border-left:3px solid transparent;min-height:44px}
-.nav-item:hover{background:rgba(79,142,247,.08);color:var(--text)}
-.nav-item.active{background:rgba(79,142,247,.13);color:var(--accent);border-left-color:var(--accent);font-weight:500}
+.nav-item:hover{background:var(--accent-soft);color:var(--text)}
+.nav-item.active{background:var(--accent-soft);color:var(--accent);border-left-color:var(--accent);font-weight:500}
 .nav-item .icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
 .badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
 #main{margin-left:var(--sw);display:flex;flex-direction:column;min-height:100vh}
@@ -36,11 +39,11 @@ nav{flex:1;padding:8px 0 80px}
 #sync-dot{width:10px;height:10px;border-radius:50%;background:var(--muted);cursor:help;flex-shrink:0;transition:.3s}
 #user-chip{font-size:11px;color:var(--muted);background:var(--card2);border:1px solid var(--border);padding:3px 9px;border-radius:20px;cursor:pointer;display:none}
 .btn{padding:9px 16px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:500;transition:.15s;display:inline-flex;align-items:center;gap:6px;min-height:40px;white-space:nowrap;font-family:inherit}
-.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#3d7de8}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:var(--accent-hover)}
 .btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--border)}
-.btn-success{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.btn-success{background:var(--green-soft);color:var(--green);border:1px solid #bfe6cf}
 .btn-danger{background:var(--red);color:#fff}
-.btn-warning{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3)}
+.btn-warning{background:var(--yellow-soft);color:var(--yellow);border:1px solid #ecd5a3}
 .btn-sm{padding:6px 12px;font-size:12px;min-height:34px;border-radius:8px}
 .btn-icon{padding:8px;min-height:40px;min-width:40px;justify-content:center}
 #page{padding:20px;flex:1;padding-bottom:100px}
@@ -66,21 +69,21 @@ thead tr{border-bottom:1px solid var(--border)}
 th{padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600;white-space:nowrap}
 td{padding:10px 14px;border-bottom:1px solid rgba(42,51,71,.5);font-size:13px;vertical-align:middle}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(79,142,247,.04)}
+tr:hover td{background:#f3f6fb}
 .tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
-.t-green{background:rgba(34,197,94,.15);color:var(--green)}
-.t-red{background:rgba(239,68,68,.15);color:var(--red)}
-.t-yellow{background:rgba(245,158,11,.15);color:var(--yellow)}
+.t-green{background:var(--green-soft);color:var(--green)}
+.t-red{background:var(--red-soft);color:var(--red)}
+.t-yellow{background:var(--yellow-soft);color:var(--yellow)}
 .t-blue{background:rgba(79,142,247,.15);color:var(--accent)}
-.t-purple{background:rgba(167,139,250,.15);color:var(--purple)}
-.t-teal{background:rgba(20,184,166,.15);color:var(--teal)}
+.t-purple{background:#efeafb;color:var(--purple)}
+.t-teal{background:#e2f4f2;color:var(--teal)}
 .row-actions{display:flex;gap:6px;align-items:center}
 .empty-state{text-align:center;padding:48px 20px;color:var(--muted)}
 .empty-state .es-icon{font-size:40px;margin-bottom:12px}
 .empty-state h3{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
 .empty-state p{font-size:13px}
 /* Modal */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:500;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(22,34,57,.45);z-index:500;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
 .modal-overlay.open{display:flex}
 .modal{background:var(--sidebar);border:1px solid var(--border);border-radius:16px;width:100%;max-width:520px;margin:auto;display:flex;flex-direction:column;max-height:90vh;overflow:hidden}
 .modal-lg{max-width:700px}
@@ -100,7 +103,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
 /* Login */
 #login-screen{display:none;position:fixed;inset:0;z-index:1000;background:var(--bg);align-items:center;justify-content:center;flex-direction:column;gap:20px}
 .login-card{background:var(--sidebar);border:1px solid var(--border);border-radius:20px;padding:36px;max-width:420px;width:100%;margin:0 16px;text-align:center}
-.login-logo{width:56px;height:56px;background:linear-gradient(135deg,#4f8ef7,#7c3aed);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:#fff;margin:0 auto 16px}
+.login-logo{width:56px;height:56px;background:linear-gradient(135deg,#2b5fb3,#1e3f7a);border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:#fff;margin:0 auto 16px}
 .login-title{font-size:22px;font-weight:700;margin-bottom:4px}
 .login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
 .login-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -109,7 +112,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
 .login-input{width:100%;background:var(--card2);border:1px solid var(--border);color:var(--text);padding:12px 14px;border-radius:12px;font-size:14px;outline:none;font-family:inherit;margin-bottom:10px;text-align:center}
 .login-input:focus{border-color:var(--accent)}
 .login-submit{width:100%;padding:13px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit;margin-top:6px}
-.login-submit:hover{background:#3d7de8}
+.login-submit:hover{background:var(--accent-hover)}
 .login-submit:disabled{opacity:.5;cursor:wait}
 .login-link{background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:8px;margin-top:8px;font-family:inherit;text-decoration:underline}
 .login-link:hover{color:var(--accent)}
@@ -119,11 +122,11 @@ tr:hover td{background:rgba(79,142,247,.04)}
 /* User menu */
 .user-menu-list{display:flex;flex-direction:column;gap:8px}
 .user-menu-btn{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--card2);border:1px solid var(--border);border-radius:12px;cursor:pointer;font-size:14px;color:var(--text);font-family:inherit;text-align:left;transition:.15s}
-.user-menu-btn:hover{border-color:var(--accent);background:rgba(79,142,247,.08)}
+.user-menu-btn:hover{border-color:var(--accent);background:var(--accent-soft)}
 .user-menu-btn .mi{font-size:18px;width:24px;text-align:center}
 .user-menu-btn.danger:hover{border-color:var(--red);color:var(--red)}
 /* Toast */
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#e2e8f0;padding:10px 20px;border-radius:12px;font-size:13px;z-index:9999;display:none;border:1px solid var(--border);white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1d2533;color:#e2e8f0;padding:10px 20px;border-radius:12px;font-size:13px;z-index:9999;display:none;border:1px solid var(--border);white-space:nowrap;box-shadow:0 8px 24px rgba(22,34,57,.18)}
 /* Confirm */
 .confirm-body{padding:24px 20px}
 .confirm-body p{font-size:14px;color:var(--text);margin-bottom:4px}
@@ -134,13 +137,13 @@ tr:hover td{background:rgba(79,142,247,.04)}
 .chip:hover{border-color:var(--accent);color:var(--text)}
 .chip.active{background:rgba(79,142,247,.15);border-color:var(--accent);color:var(--accent)}
 /* FAB */
-.fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:24px;cursor:pointer;z-index:80;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(79,142,247,.4);transition:.2s}
-.fab:hover{background:#3d7de8;transform:scale(1.06)}
+.fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:24px;cursor:pointer;z-index:80;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(43,95,179,.26);transition:.2s}
+.fab:hover{background:var(--accent-hover);transform:scale(1.06)}
 /* Unit checkbox list */
 .unit-list{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;padding:2px}
 .unit-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--card2);border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:.15s}
 .unit-item:hover{border-color:var(--accent)}
-.unit-item.selected{border-color:var(--accent);background:rgba(79,142,247,.1)}
+.unit-item.selected{border-color:var(--accent);background:var(--accent-soft)}
 .unit-item input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--accent)}
 .unit-info{flex:1;min-width:0}
 .unit-info .u-name{font-size:13px;font-weight:500}
@@ -148,7 +151,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
 /* Divider */
 .divider{height:1px;background:var(--border);margin:16px 0}
 /* Info box */
-.info-box{background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.2);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-bottom:14px}
+.info-box{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);margin-bottom:14px}
 .info-box strong{color:var(--accent)}
 /* Chart */
 .chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px}
@@ -157,7 +160,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
 .qty-cell{text-align:center;font-weight:600;font-size:14px}
 .qty-zero{color:var(--muted);font-weight:400}
 /* Low stock badge */
-.low-badge{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+.low-badge{background:var(--red-soft);color:var(--red);border:1px solid #f0c6c6;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
 /* Responsive */
 @media(max-width:768px){
   #sidebar{transform:translateX(-100%)}
@@ -171,9 +174,108 @@ tr:hover td{background:rgba(79,142,247,.04)}
   .stat-grid{grid-template-columns:repeat(2,1fr)}
   #charts-row{grid-template-columns:1fr !important}
 }
+/* ===== Elegant refinements (light theme) ===== */
+body{letter-spacing:.1px}
+h1,h2,h3{letter-spacing:-.2px}
+#sidebar{box-shadow:1px 0 0 var(--border)}
+.logo{padding:18px 16px}
+.logo-text{letter-spacing:.3px}
+.logo-sub{letter-spacing:.4px;text-transform:uppercase}
+.nav-item{margin:1px 8px;padding:10px 12px;border-radius:10px;border-left:none}
+.nav-item:hover{background:var(--card2);color:var(--text)}
+.nav-item.active{background:var(--accent-soft);color:var(--accent);border-left:none;font-weight:600}
+.nav-item.active .ic-nav{color:var(--accent)}
+.nav-section{margin-top:6px}
+.topbar{box-shadow:0 1px 0 var(--border)}
+.btn{transition:background .15s,border-color .15s,box-shadow .15s,transform .05s}
+.btn:active{transform:translateY(1px)}
+.btn-primary{box-shadow:0 1px 2px rgba(43,95,179,.25)}
+.stat-card,.table-wrap,.chart-wrap{box-shadow:var(--shadow);border-color:var(--border)}
+.stat-card{transition:box-shadow .18s,transform .18s}
+.stat-card:hover{box-shadow:0 2px 4px rgba(22,34,57,.06),0 8px 24px rgba(22,34,57,.07);transform:translateY(-1px)}
+.stat-card .val{letter-spacing:-.5px}
+.modal,.login-card{box-shadow:0 12px 40px rgba(22,34,57,.16),0 2px 8px rgba(22,34,57,.08)}
+.login-card{border-radius:18px}
+.fab{box-shadow:0 6px 20px rgba(43,95,179,.3)}
+input.search:focus,select.filter:focus,.form-group input:focus,.form-group select:focus,.form-group textarea:focus,.login-input:focus{box-shadow:0 0 0 3px var(--accent-soft)}
+input.search::placeholder,.form-group input::placeholder,.login-input::placeholder{color:#a4adbd}
+.tag{letter-spacing:.2px}
+th{letter-spacing:.7px}
+/* Inline icons */
+.ic{width:1em;height:1em;display:inline-block;vertical-align:-0.13em;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.btn .ic{width:16px;height:16px;vertical-align:-0.18em}
+.ic-nav{width:18px;height:18px;display:inline-flex;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;color:var(--muted)}
+.nav-item .icon{display:inline-flex;align-items:center;justify-content:center;width:20px}
+.cat-ic{width:16px;height:16px;vertical-align:-.2em;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.hero-ic{width:46px;height:46px;stroke:var(--muted);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.es-icon .hero-ic{width:52px;height:52px}
+.detail-ic{width:15px;height:15px;vertical-align:-.18em;margin-right:7px;stroke:var(--muted);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.modal-close{font-size:0;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center}
+.modal-close .ic{width:18px;height:18px}
+/* Calm scrollbars */
+*{scrollbar-width:thin;scrollbar-color:#cfd6e2 transparent}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#cfd6e2;border-radius:8px;border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:#b6c0d0;background-clip:content-box}
 </style>
 </head>
 <body>
+
+<!-- ===== ICON SPRITE (line icons) ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-dashboard" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></symbol>
+<symbol id="i-inbox-in" viewBox="0 0 24 24"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6"/><path d="M7 13h3l1 2h2l1-2h3"/><path d="M12 3v8"/><path d="M9 8l3 3 3-3"/></symbol>
+<symbol id="i-outbox" viewBox="0 0 24 24"><path d="M21 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6"/><path d="M7 13h3l1 2h2l1-2h3"/><path d="M12 11V3"/><path d="M9 6l3-3 3 3"/></symbol>
+<symbol id="i-return" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 2.6-6.3L3 8"/><path d="M3 3v5h5"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7L12 12l8.7-5"/><path d="M12 22V12"/></symbol>
+<symbol id="i-chip" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 1.5v3M15 1.5v3M9 19.5v3M15 19.5v3M1.5 9h3M1.5 15h3M19.5 9h3M19.5 15h3"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></symbol>
+<symbol id="i-building" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M15 9l4 2v10"/><path d="M9 7h2M9 11h2M9 15h2"/></symbol>
+<symbol id="i-factory" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M4 21V10l6 4v-4l6 4V6h4v15"/><path d="M8 17h2M14 17h2"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+<symbol id="i-tablet" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M11 18h2"/></symbol>
+<symbol id="i-battery" viewBox="0 0 24 24"><rect x="2" y="7" width="17" height="10" rx="2"/><path d="M22 10.5v3"/><path d="M6 11v2"/></symbol>
+<symbol id="i-sim" viewBox="0 0 24 24"><path d="M6 4a2 2 0 0 1 2-2h6l5 5v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><rect x="9.5" y="12" width="5" height="6" rx="1"/></symbol>
+<symbol id="i-led" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="12" rx="1.5"/><path d="M8 20h8M10 16v4M14 16v4"/></symbol>
+<symbol id="i-router" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></symbol>
+<symbol id="i-power" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
+<symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.6-3.6a6 6 0 0 1-7.9 7.9l-6.7 6.7a2.1 2.1 0 0 1-3-3l6.7-6.7a6 6 0 0 1 7.9-7.9z"/></symbol>
+<symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 2v6M15 2v6"/><path d="M6 8h12v3a6 6 0 0 1-12 0z"/><path d="M12 17v5"/></symbol>
+<symbol id="i-computer" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-cable" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="16.5" r="3.5"/><path d="M10 14L20 4"/><path d="M15.5 8.5l3 3M18 6l2.5 2.5"/></symbol>
+<symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></symbol>
+<symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v.01M14 21h.01M17 20.5v.5h4v-4"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 3v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 9"/><path d="M3 21v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 15"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6M14 11v6"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19.5 3 20.5l1-4z"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></symbol>
+<symbol id="i-printer" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8" rx="1"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+<symbol id="i-check-circle" viewBox="0 0 24 24"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><path d="M22 4L12 14l-3-3"/></symbol>
+<symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+<symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+<symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0l-7-7A2 2 0 0 1 3 12.2V4a2 2 0 0 1 2-2h8.2a2 2 0 0 1 1.4.6l6 6a2 2 0 0 1 0 2.8z"/><circle cx="7.5" cy="7.5" r="1.5"/></symbol>
+<symbol id="i-hash" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3L8 21M16 3l-2 18"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></symbol>
+<symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/></symbol>
+<symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+<symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3l2-3h8l2 3h3a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></symbol>
+</defs></svg>
 
 <!-- ===== LOGIN SCREEN ===== -->
 <div id="login-screen">
@@ -185,30 +287,30 @@ tr:hover td{background:rgba(79,142,247,.04)}
     <div id="login-step-pick">
       <div class="login-sub">เลือกชื่อของคุณเพื่อเข้าใช้งาน</div>
       <div class="login-btns">
-        <button class="login-btn" onclick="pickUser('mic')">👤 mic</button>
-        <button class="login-btn" onclick="pickUser('mac')">👤 mac</button>
-        <button class="login-btn" onclick="pickUser('donut')">🍩 donut</button>
-        <button class="login-btn" onclick="pickUser('aon')">👤 aon</button>
+        <button class="login-btn" onclick="pickUser('mic')"><svg class="ic"><use href="#i-user"/></svg> mic</button>
+        <button class="login-btn" onclick="pickUser('mac')"><svg class="ic"><use href="#i-user"/></svg> mac</button>
+        <button class="login-btn" onclick="pickUser('donut')"><svg class="ic"><use href="#i-user"/></svg> donut</button>
+        <button class="login-btn" onclick="pickUser('aon')"><svg class="ic"><use href="#i-user"/></svg> aon</button>
       </div>
     </div>
 
     <!-- Step 2: enter password -->
     <div id="login-step-password" style="display:none">
-      <div class="login-greet">👋 สวัสดี <span class="uname" id="login-username"></span></div>
+      <div class="login-greet">สวัสดี <span class="uname" id="login-username"></span></div>
       <div class="login-sub">กรอกรหัสผ่านเพื่อเข้าสู่ระบบ</div>
       <input type="password" id="login-pwd" class="login-input" placeholder="รหัสผ่าน" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitLogin()">
-      <button class="login-submit" id="login-submit-btn" onclick="submitLogin()">🔐 เข้าสู่ระบบ</button>
-      <button class="login-link" onclick="backToPick()">← เปลี่ยนผู้ใช้</button>
+      <button class="login-submit" id="login-submit-btn" onclick="submitLogin()">เข้าสู่ระบบ</button>
+      <button class="login-link" onclick="backToPick()"><svg class="ic"><use href="#i-arrow-left"/></svg> เปลี่ยนผู้ใช้</button>
     </div>
 
     <!-- Step 3: first-time setup -->
     <div id="login-step-setup" style="display:none">
-      <div class="login-greet">🔑 ตั้งรหัสผ่าน <span class="uname" id="setup-username"></span></div>
+      <div class="login-greet"><svg class="ic"><use href="#i-key"/></svg> ตั้งรหัสผ่าน <span class="uname" id="setup-username"></span></div>
       <div class="login-sub">ครั้งแรกของคุณ — ตั้งรหัสผ่านเพื่อความปลอดภัย<br>(อย่างน้อย 4 ตัวอักษร)</div>
       <input type="password" id="setup-pwd" class="login-input" placeholder="รหัสผ่านใหม่" autocomplete="new-password">
       <input type="password" id="setup-pwd2" class="login-input" placeholder="ยืนยันรหัสผ่าน" autocomplete="new-password" onkeydown="if(event.key==='Enter')submitSetup()">
-      <button class="login-submit" id="setup-submit-btn" onclick="submitSetup()">💾 บันทึก & เข้าใช้งาน</button>
-      <button class="login-link" onclick="backToPick()">← ยกเลิก</button>
+      <button class="login-submit" id="setup-submit-btn" onclick="submitSetup()">บันทึก & เข้าใช้งาน</button>
+      <button class="login-link" onclick="backToPick()"><svg class="ic"><use href="#i-arrow-left"/></svg> ยกเลิก</button>
     </div>
 
     <div class="login-error" id="login-error"></div>
@@ -220,21 +322,21 @@ tr:hover td{background:rgba(79,142,247,.04)}
   <div style="max-width:480px;margin:0 auto;padding:20px 16px 60px">
     <!-- Header -->
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)">
-      <div style="width:38px;height:38px;background:linear-gradient(135deg,#4f8ef7,#7c3aed);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:16px;flex-shrink:0">N</div>
+      <div style="width:38px;height:38px;background:linear-gradient(135deg,#2b5fb3,#1e3f7a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:16px;flex-shrink:0">N</div>
       <div>
         <div style="font-weight:700;font-size:15px">NEXTATE Stock</div>
-        <div id="scan-sync-label" style="font-size:11px;color:var(--muted)">⏳ กำลังโหลดข้อมูล...</div>
+        <div id="scan-sync-label" style="font-size:11px;color:var(--muted)">กำลังโหลดข้อมูล...</div>
       </div>
     </div>
     <!-- Unit Info Card -->
     <div id="scan-unit-card" style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px">
-      <div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">⏳ กำลังโหลดข้อมูลอุปกรณ์...</div>
+      <div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">กำลังโหลดข้อมูลอุปกรณ์...</div>
     </div>
     <!-- Action Section -->
     <div id="scan-action-section" style="display:none">
       <!-- GI Form -->
       <div id="scan-gi-form">
-        <div style="font-weight:600;font-size:15px;margin-bottom:14px">📤 เบิกออกอุปกรณ์นี้</div>
+        <div style="font-weight:600;font-size:15px;margin-bottom:14px"><svg class="ic"><use href="#i-outbox"/></svg> เบิกออกอุปกรณ์นี้</div>
         <div class="form-grid">
           <div class="form-group">
             <label class="lbl">วันที่เบิก</label>
@@ -243,14 +345,15 @@ tr:hover td{background:rgba(79,142,247,.04)}
           <div class="form-group">
             <label class="lbl">ผู้เบิก</label>
             <select id="scan-person">
-              <option value="mic">👤 mic</option>
-              <option value="mac">👤 mac</option>
-              <option value="donut">🍩 donut</option>
-              <option value="aon">👤 aon</option>
+              <option value="mic">mic</option>
+              <option value="mac">mac</option>
+              <option value="donut">donut</option>
+              <option value="aon">aon</option>
             </select>
           </div>
           <div class="form-group form-full">
             <label class="lbl">โครงการ</label>
+            <input class="search" id="scan-project-search" placeholder="🔍 ค้นหาโครงการ..." oninput="filterProjectSelect('scan-project',this.value)" style="margin-bottom:6px;width:100%">
             <select id="scan-project"><option value="">— เลือกโครงการ —</option></select>
           </div>
           <div class="form-group form-full">
@@ -266,7 +369,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
             <input type="number" id="scan-lng" step="any" placeholder="102.8236">
           </div>
           <div class="form-group form-full" style="flex-direction:row;align-items:center;gap:10px">
-            <button class="btn btn-secondary btn-sm" onclick="getScanGps()">📍 ตำแหน่งปัจจุบัน</button>
+            <button class="btn btn-secondary btn-sm" onclick="getScanGps()"><svg class="ic"><use href="#i-pin"/></svg> ตำแหน่งปัจจุบัน</button>
             <span id="scan-gps-status" style="font-size:11px;color:var(--muted)"></span>
           </div>
           <div class="form-group form-full">
@@ -274,25 +377,25 @@ tr:hover td{background:rgba(79,142,247,.04)}
             <input id="scan-notes" placeholder="จุดประสงค์การใช้...">
           </div>
         </div>
-        <button class="btn btn-danger" style="width:100%;margin-top:8px;justify-content:center;font-size:15px" onclick="submitScanGI()">📤 ยืนยันเบิกออก</button>
+        <button class="btn btn-danger" style="width:100%;margin-top:8px;justify-content:center;font-size:15px" onclick="submitScanGI()"><svg class="ic"><use href="#i-outbox"/></svg> ยืนยันเบิกออก</button>
       </div>
       <!-- Already Deployed -->
-      <div id="scan-deployed-msg" style="display:none;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;padding:16px;text-align:center">
-        <div style="font-size:24px;margin-bottom:8px">📤</div>
+      <div id="scan-deployed-msg" style="display:none;background:var(--yellow-soft);border:1px solid #ecd5a3;border-radius:12px;padding:16px;text-align:center">
+        <svg class="ic" style="width:30px;height:30px;color:var(--yellow);margin-bottom:8px"><use href="#i-outbox"/></svg>
         <div style="font-weight:600;margin-bottom:4px">อุปกรณ์นี้กำลังใช้งานอยู่</div>
         <div id="scan-deployed-detail" style="font-size:13px;color:var(--muted)"></div>
-        <a href="/" style="display:inline-block;margin-top:12px;font-size:13px;color:var(--accent)">เปิดระบบหลัก →</a>
+        <a href="/" style="display:inline-block;margin-top:12px;font-size:13px;color:var(--accent)">เปิดระบบหลัก <svg class="ic"><use href="#i-arrow-right"/></svg></a>
       </div>
       <!-- Repair -->
-      <div id="scan-repair-msg" style="display:none;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:16px;text-align:center">
-        <div style="font-size:24px;margin-bottom:8px">🔧</div>
+      <div id="scan-repair-msg" style="display:none;background:var(--red-soft);border:1px solid #f0c6c6;border-radius:12px;padding:16px;text-align:center">
+        <svg class="ic" style="width:30px;height:30px;color:var(--red);margin-bottom:8px"><use href="#i-wrench"/></svg>
         <div style="font-weight:600;margin-bottom:4px">อุปกรณ์นี้อยู่ระหว่างซ่อม</div>
-        <a href="/" style="display:inline-block;margin-top:12px;font-size:13px;color:var(--accent)">เปิดระบบหลัก →</a>
+        <a href="/" style="display:inline-block;margin-top:12px;font-size:13px;color:var(--accent)">เปิดระบบหลัก <svg class="ic"><use href="#i-arrow-right"/></svg></a>
       </div>
     </div>
     <!-- Success -->
     <div id="scan-success" style="display:none;text-align:center;padding:40px 20px">
-      <div style="font-size:60px;margin-bottom:16px">✅</div>
+      <svg class="ic" style="width:58px;height:58px;color:var(--green);margin-bottom:16px"><use href="#i-check-circle"/></svg>
       <div style="font-weight:700;font-size:20px;margin-bottom:8px">บันทึกสำเร็จ!</div>
       <div id="scan-success-msg" style="color:var(--muted);font-size:14px;margin-bottom:24px"></div>
       <a href="/" class="btn btn-primary">เปิดระบบหลัก</a>
@@ -308,21 +411,21 @@ tr:hover td{background:rgba(79,142,247,.04)}
   </div>
   <nav>
     <div class="nav-section">ภาพรวม</div>
-    <div class="nav-item" onclick="nav('dashboard')"><span class="icon">📊</span>Dashboard</div>
+    <div class="nav-item" onclick="nav('dashboard')"><span class="icon"><svg class="ic-nav"><use href="#i-dashboard"/></svg></span>Dashboard</div>
     <div class="nav-section">การเคลื่อนไหว</div>
-    <div class="nav-item" onclick="nav('gr')"><span class="icon">📥</span>รับเข้า (GR)</div>
-    <div class="nav-item" onclick="nav('gi')"><span class="icon">📤</span>เบิกออก (GI)</div>
-    <div class="nav-item" onclick="nav('ret')"><span class="icon">🔁</span>รับคืน</div>
+    <div class="nav-item" onclick="nav('gr')"><span class="icon"><svg class="ic-nav"><use href="#i-inbox-in"/></svg></span>รับเข้า (GR)</div>
+    <div class="nav-item" onclick="nav('gi')"><span class="icon"><svg class="ic-nav"><use href="#i-outbox"/></svg></span>เบิกออก (GI)</div>
+    <div class="nav-item" onclick="nav('ret')"><span class="icon"><svg class="ic-nav"><use href="#i-return"/></svg></span>รับคืน</div>
     <div class="nav-section">คลังสินค้า</div>
-    <div class="nav-item" onclick="nav('stock')"><span class="icon">📦</span>สต็อกรวม</div>
-    <div class="nav-item" onclick="nav('units')"><span class="icon">🔩</span>รายเครื่อง</div>
-    <div class="nav-item" onclick="nav('movements')"><span class="icon">📋</span>ประวัติ</div>
+    <div class="nav-item" onclick="nav('stock')"><span class="icon"><svg class="ic-nav"><use href="#i-box"/></svg></span>สต็อกรวม</div>
+    <div class="nav-item" onclick="nav('units')"><span class="icon"><svg class="ic-nav"><use href="#i-chip"/></svg></span>รายเครื่อง</div>
+    <div class="nav-item" onclick="nav('movements')"><span class="icon"><svg class="ic-nav"><use href="#i-list"/></svg></span>ประวัติ</div>
     <div class="nav-section">จัดการ</div>
-    <div class="nav-item" onclick="nav('projects')"><span class="icon">🏗️</span>โครงการ</div>
-    <div class="nav-item" onclick="nav('suppliers')"><span class="icon">🏭</span>Supplier</div>
-    <div class="nav-item" onclick="nav('products')"><span class="icon">🗂️</span>สินค้า</div>
+    <div class="nav-item" onclick="nav('projects')"><span class="icon"><svg class="ic-nav"><use href="#i-building"/></svg></span>โครงการ</div>
+    <div class="nav-item" onclick="nav('suppliers')"><span class="icon"><svg class="ic-nav"><use href="#i-factory"/></svg></span>Supplier</div>
+    <div class="nav-item" onclick="nav('products')"><span class="icon"><svg class="ic-nav"><use href="#i-folder"/></svg></span>สินค้า</div>
     <div class="nav-section">ระบบ</div>
-    <div class="nav-item" onclick="nav('settings')"><span class="icon">⚙️</span>ตั้งค่า</div>
+    <div class="nav-item" onclick="nav('settings')"><span class="icon"><svg class="ic-nav"><use href="#i-settings"/></svg></span>ตั้งค่า</div>
   </nav>
 </div>
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -344,8 +447,8 @@ tr:hover td{background:rgba(79,142,247,.04)}
 <div class="modal-overlay" id="modal-gr">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <h2>📥 รับสินค้าเข้า (Goods Receipt)</h2>
-      <button class="modal-close" onclick="closeModal('modal-gr')">✕</button>
+      <h2><svg class="ic"><use href="#i-inbox-in"/></svg> รับสินค้าเข้า (Goods Receipt)</h2>
+      <button class="modal-close" onclick="closeModal('modal-gr')"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
     <div class="modal-body">
       <div class="form-grid">
@@ -366,8 +469,8 @@ tr:hover td{background:rgba(79,142,247,.04)}
         <div class="divider"></div>
         <!-- Mode toggle -->
         <div style="display:flex;gap:8px;margin-bottom:12px">
-          <button id="gr-mode-qty" class="btn btn-primary btn-sm" onclick="setGrMode('qty')">🔢 กรอกจำนวน</button>
-          <button id="gr-mode-sn" class="btn btn-secondary btn-sm" onclick="setGrMode('sn')">🔖 กรอก Serial</button>
+          <button id="gr-mode-qty" class="btn btn-primary btn-sm" onclick="setGrMode('qty')"><svg class="ic"><use href="#i-hash"/></svg> กรอกจำนวน</button>
+          <button id="gr-mode-sn" class="btn btn-secondary btn-sm" onclick="setGrMode('sn')"><svg class="ic"><use href="#i-tag"/></svg> กรอก Serial</button>
         </div>
         <!-- QTY MODE -->
         <div id="gr-qty-mode">
@@ -380,43 +483,38 @@ tr:hover td{background:rgba(79,142,247,.04)}
             <div class="form-group">
               <label class="lbl">รับเข้าที่ (คน/ตำแหน่ง)</label>
               <select id="gr-person-qty">
-                <option value="mic">👤 mic</option>
-                <option value="mac">👤 mac</option>
-                <option value="donut">🍩 donut</option>
-                <option value="aon">👤 aon</option>
+                <option value="mic">mic</option>
+                <option value="mac">mac</option>
+                <option value="donut">donut</option>
+                <option value="aon">aon</option>
               </select>
             </div>
             <div class="form-group form-full">
               <label class="lbl">รายละเอียด (ทุกชิ้น เช่น รุ่น, สี, spec)</label>
               <input id="gr-qty-detail" placeholder="เช่น Samsung Galaxy Tab A8, สีดำ...">
             </div>
-            <div class="form-group">
-              <label class="lbl">PIN / รหัสผ่าน (ทุกชิ้น)</label>
-              <input id="gr-qty-pin" placeholder="เช่น 1234 หรือปล่อยว่าง">
+            <!-- [device only] PIN + IMEI -->
+            <div id="gr-qty-f-device" style="display:none;grid-column:1/-1">
+              <div class="form-grid">
+                <div class="form-group"><label class="lbl">PIN / รหัสผ่าน</label><input id="gr-qty-pin" placeholder="เช่น 1234 หรือปล่อยว่าง"></div>
+                <div class="form-group"><label class="lbl">IMEI 1</label><input id="gr-qty-imei1" placeholder="เลข IMEI 1"></div>
+                <div class="form-group"><label class="lbl">IMEI 2</label><input id="gr-qty-imei2" placeholder="เลข IMEI 2"></div>
+              </div>
             </div>
-            <div class="form-group">
-              <label class="lbl">ยี่ห้อ</label>
-              <input id="gr-qty-brand" placeholder="เช่น Samsung, Huawei">
+            <!-- [sim only] เบอร์โทร -->
+            <div id="gr-qty-f-sim" style="display:none;grid-column:1/-1">
+              <div class="form-grid">
+                <div class="form-group form-full"><label class="lbl">เบอร์โทร (ซิม)</label><input id="gr-qty-phone" placeholder="เช่น 0812345678"></div>
+              </div>
             </div>
-            <div class="form-group">
-              <label class="lbl">รุ่น</label>
-              <input id="gr-qty-model" placeholder="เช่น Galaxy A7, Tab S6">
-            </div>
-            <div class="form-group">
-              <label class="lbl">IMEI / ME1</label>
-              <input id="gr-qty-imei1" placeholder="เลข IMEI 1">
-            </div>
-            <div class="form-group">
-              <label class="lbl">IMEI / ME2</label>
-              <input id="gr-qty-imei2" placeholder="เลข IMEI 2">
-            </div>
-            <div class="form-group">
-              <label class="lbl">วันหมดประกัน</label>
-              <input type="date" id="gr-qty-warranty">
-            </div>
-            <div class="form-group">
-              <label class="lbl">ร้านที่ซื้อ</label>
-              <input id="gr-qty-store" placeholder="เช่น Shopee, Lazada, ซื้อตรง">
+            <!-- [device + standard] Brand / Model / Warranty / Store -->
+            <div id="gr-qty-f-standard" style="display:none;grid-column:1/-1">
+              <div class="form-grid">
+                <div class="form-group"><label class="lbl">ยี่ห้อ</label><input id="gr-qty-brand" placeholder="เช่น Samsung, Huawei"></div>
+                <div class="form-group"><label class="lbl">รุ่น</label><input id="gr-qty-model" placeholder="เช่น Galaxy A7"></div>
+                <div class="form-group"><label class="lbl">วันหมดประกัน</label><input type="date" id="gr-qty-warranty"></div>
+                <div class="form-group"><label class="lbl">ร้านที่ซื้อ</label><input id="gr-qty-store" placeholder="เช่น Shopee, Lazada"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -431,43 +529,36 @@ tr:hover td{background:rgba(79,142,247,.04)}
             <div class="form-group">
               <label class="lbl">รับเข้าที่ (คน/ตำแหน่ง)</label>
               <select id="gr-person-serial">
-                <option value="mic">👤 mic</option>
-                <option value="mac">👤 mac</option>
-                <option value="donut">🍩 donut</option>
-                <option value="aon">👤 aon</option>
+                <option value="mic">mic</option>
+                <option value="mac">mac</option>
+                <option value="donut">donut</option>
+                <option value="aon">aon</option>
               </select>
             </div>
             <div class="form-group">
               <label class="lbl">รายละเอียดเพิ่มเติม (ทุกชิ้น)</label>
               <input id="gr-serial-detail" placeholder="เช่น รุ่น, สี, spec...">
             </div>
-            <div class="form-group">
-              <label class="lbl">PIN / รหัสผ่าน</label>
-              <input id="gr-sn-pin" placeholder="เช่น 1234 หรือปล่อยว่าง">
+            <!-- [device only] PIN + IMEI -->
+            <div id="gr-sn-f-device" style="display:none;grid-column:1/-1">
+              <div class="form-grid">
+                <div class="form-group"><label class="lbl">PIN / รหัสผ่าน</label><input id="gr-sn-pin" placeholder="เช่น 1234 หรือปล่อยว่าง"></div>
+                <div class="form-group"><label class="lbl">IMEI 1</label><input id="gr-sn-imei1" placeholder="เลข IMEI 1"></div>
+                <div class="form-group"><label class="lbl">IMEI 2</label><input id="gr-sn-imei2" placeholder="เลข IMEI 2"></div>
+              </div>
             </div>
-            <div class="form-group">
-              <label class="lbl">ยี่ห้อ</label>
-              <input id="gr-sn-brand" placeholder="เช่น Samsung, Huawei">
+            <!-- [sim only] หมายเหตุ: SN mode ใช้ serial = เบอร์โทร, ไม่ต้องช่องเพิ่ม -->
+            <div id="gr-sn-f-sim" style="display:none;grid-column:1/-1">
+              <div class="info-box">💡 กรอก <strong>เบอร์โทรซิม</strong> ในช่อง Serial Numbers ด้านบน (1 เบอร์ต่อบรรทัด)</div>
             </div>
-            <div class="form-group">
-              <label class="lbl">รุ่น</label>
-              <input id="gr-sn-model" placeholder="เช่น Galaxy A7">
-            </div>
-            <div class="form-group">
-              <label class="lbl">IMEI / ME1</label>
-              <input id="gr-sn-imei1" placeholder="เลข IMEI 1">
-            </div>
-            <div class="form-group">
-              <label class="lbl">IMEI / ME2</label>
-              <input id="gr-sn-imei2" placeholder="เลข IMEI 2">
-            </div>
-            <div class="form-group">
-              <label class="lbl">วันหมดประกัน</label>
-              <input type="date" id="gr-sn-warranty">
-            </div>
-            <div class="form-group">
-              <label class="lbl">ร้านที่ซื้อ</label>
-              <input id="gr-sn-store" placeholder="เช่น Shopee, Lazada">
+            <!-- [device + standard] Brand / Model / Warranty / Store -->
+            <div id="gr-sn-f-standard" style="display:none;grid-column:1/-1">
+              <div class="form-grid">
+                <div class="form-group"><label class="lbl">ยี่ห้อ</label><input id="gr-sn-brand" placeholder="เช่น Samsung, Huawei"></div>
+                <div class="form-group"><label class="lbl">รุ่น</label><input id="gr-sn-model" placeholder="เช่น Galaxy A7"></div>
+                <div class="form-group"><label class="lbl">วันหมดประกัน</label><input type="date" id="gr-sn-warranty"></div>
+                <div class="form-group"><label class="lbl">ร้านที่ซื้อ</label><input id="gr-sn-store" placeholder="เช่น Shopee, Lazada"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -490,7 +581,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-gr')">ยกเลิก</button>
-      <button class="btn btn-primary" onclick="saveGR()">📥 บันทึกรับเข้า</button>
+      <button class="btn btn-primary" onclick="saveGR()"><svg class="ic"><use href="#i-inbox-in"/></svg> บันทึกรับเข้า</button>
     </div>
   </div>
 </div>
@@ -499,8 +590,8 @@ tr:hover td{background:rgba(79,142,247,.04)}
 <div class="modal-overlay" id="modal-gi">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <h2>📤 เบิกสินค้าออก (Goods Issue)</h2>
-      <button class="modal-close" onclick="closeModal('modal-gi')">✕</button>
+      <h2><svg class="ic"><use href="#i-outbox"/></svg> เบิกสินค้าออก (Goods Issue)</h2>
+      <button class="modal-close" onclick="closeModal('modal-gi')"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
     <div class="modal-body">
       <div class="form-grid">
@@ -510,13 +601,14 @@ tr:hover td{background:rgba(79,142,247,.04)}
         </div>
         <div class="form-group">
           <label class="lbl">โครงการ</label>
-          <select id="gi-project"></select>
+          <input class="search" id="gi-project-search" placeholder="🔍 ค้นหาโครงการ..." oninput="filterProjectSelect('gi-project',this.value)" style="margin-bottom:6px;width:100%">
+          <select id="gi-project" size="1" style="width:100%"></select>
         </div>
         <div class="form-group">
           <label class="lbl">คนรับผิดชอบ</label>
           <select id="gi-person">
-            <option value="mic">👤 mic</option><option value="mac">👤 mac</option>
-            <option value="donut">🍩 donut</option><option value="aon">👤 aon</option>
+            <option value="mic">mic</option><option value="mac">mac</option>
+            <option value="donut">donut</option><option value="aon">aon</option>
           </select>
         </div>
         <div class="form-group">
@@ -543,7 +635,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
       <div class="form-group"><label class="lbl">รหัส Anydesk</label><input id="gi-anydesk" placeholder="เช่น 123 456 789"></div>
       <div class="form-group"><label class="lbl">หมายเหตุ</label><input id="gi-notes" placeholder="จุดประสงค์การใช้..."></div>
       <div class="divider"></div>
-      <div class="lbl" style="margin-bottom:10px">📍 พิกัด GPS (ถ้ามี)</div>
+      <div class="lbl" style="margin-bottom:10px"><svg class="ic"><use href="#i-pin"/></svg> พิกัด GPS (ถ้ามี)</div>
       <div class="form-grid">
         <div class="form-group">
           <label class="lbl">Latitude</label>
@@ -554,14 +646,14 @@ tr:hover td{background:rgba(79,142,247,.04)}
           <input type="number" id="gi-lng" step="any" placeholder="เช่น 102.8236">
         </div>
         <div class="form-group form-full" style="flex-direction:row;align-items:center;gap:12px">
-          <button class="btn btn-secondary btn-sm" type="button" onclick="getGpsLocation()">📍 แชร์ตำแหน่งปัจจุบัน</button>
+          <button class="btn btn-secondary btn-sm" type="button" onclick="getGpsLocation()"><svg class="ic"><use href="#i-pin"/></svg> แชร์ตำแหน่งปัจจุบัน</button>
           <span id="gi-gps-status" style="font-size:12px;color:var(--muted)"></span>
         </div>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-gi')">ยกเลิก</button>
-      <button class="btn btn-danger" onclick="saveGI()">📤 บันทึกเบิกออก</button>
+      <button class="btn btn-danger" onclick="saveGI()"><svg class="ic"><use href="#i-outbox"/></svg> บันทึกเบิกออก</button>
     </div>
   </div>
 </div>
@@ -570,8 +662,8 @@ tr:hover td{background:rgba(79,142,247,.04)}
 <div class="modal-overlay" id="modal-ret">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <h2>🔁 รับสินค้าคืน</h2>
-      <button class="modal-close" onclick="closeModal('modal-ret')">✕</button>
+      <h2><svg class="ic"><use href="#i-return"/></svg> รับสินค้าคืน</h2>
+      <button class="modal-close" onclick="closeModal('modal-ret')"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
     <div class="modal-body">
       <div class="form-grid">
@@ -586,15 +678,15 @@ tr:hover td{background:rgba(79,142,247,.04)}
         <div class="form-group">
           <label class="lbl">รับคืนเข้าที่ (คน/ตำแหน่ง)</label>
           <select id="ret-person">
-            <option value="mic">👤 mic</option><option value="mac">👤 mac</option>
-            <option value="donut">🍩 donut</option><option value="aon">👤 aon</option>
+            <option value="mic">mic</option><option value="mac">mac</option>
+            <option value="donut">donut</option><option value="aon">aon</option>
           </select>
         </div>
         <div class="form-group">
           <label class="lbl">สภาพสินค้า</label>
           <select id="ret-condition">
-            <option value="in_stock">✅ ปกติ → กลับคลัง</option>
-            <option value="repair">🔧 ชำรุด → ส่งซ่อม</option>
+            <option value="in_stock">ปกติ (กลับเข้าคลัง)</option>
+            <option value="repair">ชำรุด (ส่งซ่อม)</option>
           </select>
         </div>
       </div>
@@ -608,7 +700,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-ret')">ยกเลิก</button>
-      <button class="btn btn-success" onclick="saveReturn()">🔁 บันทึกรับคืน</button>
+      <button class="btn btn-success" onclick="saveReturn()"><svg class="ic"><use href="#i-return"/></svg> บันทึกรับคืน</button>
     </div>
   </div>
 </div>
@@ -618,7 +710,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
   <div class="modal">
     <div class="modal-header">
       <h2 id="form-title">แบบฟอร์ม</h2>
-      <button class="modal-close" onclick="closeModal('modal-form')">✕</button>
+      <button class="modal-close" onclick="closeModal('modal-form')"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
     <div class="modal-body" id="form-body"></div>
     <div class="modal-footer">
@@ -632,8 +724,8 @@ tr:hover td{background:rgba(79,142,247,.04)}
 <div class="modal-overlay" id="modal-qr">
   <div class="modal" style="max-width:380px">
     <div class="modal-header">
-      <h2>🔲 QR Code อุปกรณ์</h2>
-      <button class="modal-close" onclick="closeModal('modal-qr')">✕</button>
+      <h2><svg class="ic"><use href="#i-qr"/></svg> QR Code อุปกรณ์</h2>
+      <button class="modal-close" onclick="closeModal('modal-qr')"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
     <div class="modal-body" style="text-align:center">
       <div id="qr-canvas" style="display:inline-block;padding:12px;background:#fff;border-radius:12px;margin-bottom:16px"></div>
@@ -641,7 +733,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-qr')">ปิด</button>
-      <button class="btn btn-primary" onclick="printQR()">🖨️ พิมพ์</button>
+      <button class="btn btn-primary" onclick="printQR()"><svg class="ic"><use href="#i-printer"/></svg> พิมพ์</button>
     </div>
   </div>
 </div>
@@ -650,14 +742,14 @@ tr:hover td{background:rgba(79,142,247,.04)}
 <div class="modal-overlay" id="modal-user">
   <div class="modal" style="max-width:360px">
     <div class="modal-header">
-      <h2 id="user-menu-title">👤 บัญชีของฉัน</h2>
-      <button class="modal-close" onclick="closeModal('modal-user')">✕</button>
+      <h2 id="user-menu-title"><svg class="ic"><use href="#i-user"/></svg> บัญชีของฉัน</h2>
+      <button class="modal-close" onclick="closeModal('modal-user')"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
     <div class="modal-body">
       <div id="user-menu-info" style="text-align:center;padding:8px 0 18px;color:var(--muted);font-size:12px"></div>
       <div class="user-menu-list">
-        <button class="user-menu-btn" onclick="openChangePassword()"><span class="mi">🔑</span><div><div style="font-weight:600">เปลี่ยนรหัสผ่าน</div><div style="font-size:11px;color:var(--muted)">อัปเดตรหัสผ่านบัญชีของคุณ</div></div></button>
-        <button class="user-menu-btn danger" onclick="doLogout()"><span class="mi">🚪</span><div><div style="font-weight:600">ออกจากระบบ</div><div style="font-size:11px;color:var(--muted)">กลับไปหน้าเข้าสู่ระบบ</div></div></button>
+        <button class="user-menu-btn" onclick="openChangePassword()"><span class="mi"><svg class="ic"><use href="#i-key"/></svg></span><div><div style="font-weight:600">เปลี่ยนรหัสผ่าน</div><div style="font-size:11px;color:var(--muted)">อัปเดตรหัสผ่านบัญชีของคุณ</div></div></button>
+        <button class="user-menu-btn danger" onclick="doLogout()"><span class="mi"><svg class="ic"><use href="#i-logout"/></svg></span><div><div style="font-weight:600">ออกจากระบบ</div><div style="font-size:11px;color:var(--muted)">กลับไปหน้าเข้าสู่ระบบ</div></div></button>
       </div>
     </div>
   </div>
@@ -667,8 +759,8 @@ tr:hover td{background:rgba(79,142,247,.04)}
 <div class="modal-overlay" id="modal-changepwd">
   <div class="modal" style="max-width:420px">
     <div class="modal-header">
-      <h2>🔑 เปลี่ยนรหัสผ่าน</h2>
-      <button class="modal-close" onclick="closeModal('modal-changepwd')">✕</button>
+      <h2><svg class="ic"><use href="#i-key"/></svg> เปลี่ยนรหัสผ่าน</h2>
+      <button class="modal-close" onclick="closeModal('modal-changepwd')"><svg class="ic"><use href="#i-x"/></svg></button>
     </div>
     <div class="modal-body">
       <div class="form-group" style="margin-bottom:12px">
@@ -687,7 +779,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-changepwd')">ยกเลิก</button>
-      <button class="btn btn-primary" onclick="submitChangePassword()">💾 บันทึก</button>
+      <button class="btn btn-primary" onclick="submitChangePassword()"><svg class="ic"><use href="#i-save"/></svg> บันทึก</button>
     </div>
   </div>
 </div>
@@ -695,7 +787,7 @@ tr:hover td{background:rgba(79,142,247,.04)}
 <!-- ===== MODAL: Confirm ===== -->
 <div class="modal-overlay" id="modal-confirm">
   <div class="modal" style="max-width:380px">
-    <div class="modal-header"><h2 id="confirm-title">ยืนยัน</h2><button class="modal-close" onclick="closeModal('modal-confirm')">✕</button></div>
+    <div class="modal-header"><h2 id="confirm-title">ยืนยัน</h2><button class="modal-close" onclick="closeModal('modal-confirm')"><svg class="ic"><use href="#i-x"/></svg></button></div>
     <div class="confirm-body"><p id="confirm-msg"></p><p class="confirm-sub" id="confirm-sub"></p></div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-confirm')">ยกเลิก</button>
@@ -711,21 +803,23 @@ tr:hover td{background:rgba(79,142,247,.04)}
 // ==================== CONSTANTS ====================
 const PERSONS = ['mic','mac','donut','aon'];
 const PERSON_ICON = {mic:'👤',mac:'👤',donut:'🍩',aon:'👤'};
+function svgIcon(id,cls){return '<svg class="'+(cls||'cat-ic')+'"><use href="#i-'+id+'"/></svg>';}
 const CATS = {
-  tablet:    {label:'แท็บเล็ต',    icon:'📱', serial:true},
-  battery:   {label:'แบตเตอรี่',   icon:'🔋', serial:true},
-  sim:       {label:'ซิมการ์ด',    icon:'📡', serial:true},
-  led:       {label:'จอ LED',       icon:'💡', serial:true},
-  router:    {label:'เราน์เตอร์',  icon:'🌐', serial:true},
-  switching: {label:'Switching PS', icon:'⚡', serial:true},
-  board:     {label:'บอร์ด IO',    icon:'🔧', serial:true},
-  poe:       {label:'POE Switch',   icon:'🔌', serial:true},
-  computer:  {label:'Computer',     icon:'💻', serial:true},
-  cable:     {label:'สาย LAN',     icon:'🔗', serial:false},
-  other:     {label:'อื่นๆ',       icon:'🗂️', serial:false},
+  tablet:    {label:'แท็บเล็ต',    icon:svgIcon('tablet'), serial:true},
+  battery:   {label:'แบตเตอรี่',   icon:svgIcon('battery'), serial:true},
+  sim:       {label:'ซิมการ์ด',    icon:svgIcon('sim'), serial:true},
+  led:       {label:'จอ LED',       icon:svgIcon('led'), serial:true},
+  router:    {label:'เราน์เตอร์',  icon:svgIcon('router'), serial:true},
+  switching: {label:'Switching PS', icon:svgIcon('power'), serial:true},
+  board:     {label:'บอร์ด IO',    icon:svgIcon('wrench'), serial:true},
+  poe:       {label:'POE Switch',   icon:svgIcon('plug'), serial:true},
+  computer:  {label:'Computer',     icon:svgIcon('computer'), serial:true},
+  cable:     {label:'สาย LAN',     icon:svgIcon('cable'), serial:false},
+  other:     {label:'อื่นๆ',       icon:svgIcon('folder'), serial:false},
 };
+const CAT_FALLBACK = svgIcon('box');
 const STATUSES = {in_stock:{label:'คงคลัง',cls:'t-green'},deployed:{label:'ใช้งาน',cls:'t-red'},repair:{label:'ซ่อม',cls:'t-yellow'},lost:{label:'สูญหาย',cls:'t-purple'}};
-const MOV = {GR:{label:'รับเข้า',icon:'📥',cls:'t-green'},GI:{label:'เบิกออก',icon:'📤',cls:'t-red'},RETURN:{label:'รับคืน',icon:'🔁',cls:'t-blue'},REPAIR:{label:'ส่งซ่อม',icon:'🔧',cls:'t-yellow'},RESTORE:{label:'รับซ่อมคืน',icon:'✅',cls:'t-green'},ADJUST:{label:'ปรับยอด',icon:'⚙️',cls:'t-purple'}};
+const MOV = {GR:{label:'รับเข้า',icon:svgIcon('inbox-in'),cls:'t-green'},GI:{label:'เบิกออก',icon:svgIcon('outbox'),cls:'t-red'},RETURN:{label:'รับคืน',icon:svgIcon('return'),cls:'t-blue'},REPAIR:{label:'ส่งซ่อม',icon:svgIcon('wrench'),cls:'t-yellow'},RESTORE:{label:'รับซ่อมคืน',icon:svgIcon('check'),cls:'t-green'},ADJUST:{label:'ปรับยอด',icon:svgIcon('settings'),cls:'t-purple'}};
 const DB_KEYS = ['nx_products','nx_units','nx_suppliers','nx_projects','nx_movements','nx_stock'];
 
 // ==================== FIREBASE ====================
@@ -743,7 +837,7 @@ function snapToObj(val){ return (val && typeof val==='object' && !Array.isArray(
 
 function setSyncStatus(state){
   const dot=document.getElementById('sync-dot');if(!dot)return;
-  const cfg={offline:{c:'var(--muted)',t:'ออฟไลน์'},syncing:{c:'var(--yellow)',t:'กำลังซิงค์...'},ok:{c:'var(--green)',t:'Firebase ✅'},error:{c:'var(--red)',t:'Firebase ❌'}};
+  const cfg={offline:{c:'var(--muted)',t:'ออฟไลน์'},syncing:{c:'var(--yellow)',t:'กำลังซิงค์...'},ok:{c:'var(--green)',t:'Firebase: เชื่อมต่อแล้ว'},error:{c:'var(--red)',t:'Firebase: ไม่เชื่อมต่อ'}};
   const s=cfg[state]||cfg.offline;dot.style.background=s.c;dot.title=s.t;
 }
 
@@ -852,7 +946,7 @@ function renderPage(page){
   const renders={dashboard:renderDashboard,gr:renderGR,gi:renderGI,ret:renderRet,stock:renderStock,units:renderUnits,movements:renderMovements,projects:renderProjects,suppliers:renderSuppliers,products:renderProducts,settings:renderSettings};
   const fn=renders[page];
   if(fn) document.getElementById('page').innerHTML=fn();
-  else document.getElementById('page').innerHTML=`<div class="empty-state"><div class="es-icon">🚧</div><h3>หน้านี้กำลังพัฒนา</h3></div>`;
+  else document.getElementById('page').innerHTML=`<div class="empty-state"><div class="es-icon"><svg class="hero-ic"><use href="#i-wrench"/></svg></div><h3>หน้านี้กำลังพัฒนา</h3></div>`;
   if(page==='dashboard') setTimeout(initDashboardCharts,50);
 }
 
@@ -921,21 +1015,21 @@ function renderDashboard(){
     <div class="stat-card c-red"><div class="lbl">สต็อกต่ำ</div><div class="val">${lowStock}</div><div class="sub">รายการ</div></div>
   </div>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px">
-    <button class="btn btn-primary" onclick="openGR()">📥 รับสินค้าเข้า</button>
-    <button class="btn btn-danger" onclick="openGI()">📤 เบิกออก</button>
-    <button class="btn btn-success" onclick="openRet()">🔁 รับคืน</button>
+    <button class="btn btn-primary" onclick="openGR()"><svg class="ic"><use href="#i-inbox-in"/></svg> รับสินค้าเข้า</button>
+    <button class="btn btn-danger" onclick="openGI()"><svg class="ic"><use href="#i-outbox"/></svg> เบิกออก</button>
+    <button class="btn btn-success" onclick="openRet()"><svg class="ic"><use href="#i-return"/></svg> รับคืน</button>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px" id="charts-row">
-    <div class="chart-wrap"><h3>📊 สถานะอุปกรณ์ (Serial)</h3><div style="position:relative;height:220px"><canvas id="chart-status"></canvas></div></div>
-    <div class="chart-wrap"><h3>📦 สต็อกรวมต่อหมวด</h3><div style="position:relative;height:220px"><canvas id="chart-cat"></canvas></div></div>
+    <div class="chart-wrap"><h3><svg class="ic"><use href="#i-dashboard"/></svg> สถานะอุปกรณ์ (Serial)</h3><div style="position:relative;height:220px"><canvas id="chart-status"></canvas></div></div>
+    <div class="chart-wrap"><h3><svg class="ic"><use href="#i-box"/></svg> สต็อกรวมต่อหมวด</h3><div style="position:relative;height:220px"><canvas id="chart-cat"></canvas></div></div>
   </div>
   <div class="section-header">
-    <h2>📋 รายการล่าสุด</h2>
+    <h2><svg class="ic"><use href="#i-list"/></svg> รายการล่าสุด</h2>
     <button class="btn btn-secondary btn-sm" onclick="nav('movements')">ดูทั้งหมด</button>
   </div>
   <div class="table-wrap">
     <div class="tbl-scroll"><table><thead><tr><th>วันที่</th><th>ประเภท</th><th>สินค้า</th><th>คน</th><th>โครงการ/Supplier</th></tr></thead>
-    <tbody>${recent||'<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">ยังไม่มีรายการ — เริ่มจาก 📥 รับสินค้าเข้า</td></tr>'}</tbody></table></div>
+    <tbody>${recent||'<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted)">ยังไม่มีรายการ — เริ่มจากการรับสินค้าเข้า</td></tr>'}</tbody></table></div>
   </div>`;
 }
 
@@ -950,17 +1044,17 @@ function initDashboardCharts(){
     const repair=units.filter(u=>u.status==='repair').length;
     const lost=units.filter(u=>u.status==='lost').length;
     if(window._chartStatus) window._chartStatus.destroy();
-    window._chartStatus=new Chart(stEl,{type:'doughnut',data:{labels:['คงคลัง','ใช้งาน','ซ่อม','สูญหาย'],datasets:[{data:[inStock,deployed,repair,lost],backgroundColor:['#22c55e','#ef4444','#f59e0b','#a78bfa'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#8892a4',font:{size:11},boxWidth:12,padding:10}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} ชิ้น (${units.length?Math.round(ctx.raw/units.length*100):0}%)`}}}}});
+    window._chartStatus=new Chart(stEl,{type:'doughnut',data:{labels:['คงคลัง','ใช้งาน','ซ่อม','สูญหาย'],datasets:[{data:[inStock,deployed,repair,lost],backgroundColor:['#1f9d62','#d24b4b','#c4881a','#7c5fce'],borderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{color:'#6c7689',font:{size:11},boxWidth:12,padding:10}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} ชิ้น (${units.length?Math.round(ctx.raw/units.length*100):0}%)`}}}}});
   }
   // Chart 2: Stock per category bar
   const catEl=document.getElementById('chart-cat');
   if(catEl){
     const catData=Object.entries(CATS).map(([k,c])=>{
       const ps=prods.filter(p=>p.category===k);
-      return {label:c.icon+' '+c.label.slice(0,6),total:ps.reduce((s,p)=>s+getTotalStock(p.id),0)};
+      return {label:c.label.slice(0,8),total:ps.reduce((s,p)=>s+getTotalStock(p.id),0)};
     }).filter(x=>x.total>0);
     if(window._chartCat) window._chartCat.destroy();
-    window._chartCat=new Chart(catEl,{type:'bar',data:{labels:catData.map(d=>d.label),datasets:[{label:'คงคลัง',data:catData.map(d=>d.total),backgroundColor:'rgba(79,142,247,0.7)',borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#8892a4',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#8892a4',font:{size:10},stepSize:1},grid:{color:'rgba(42,51,71,0.5)'},beginAtZero:true}}}});
+    window._chartCat=new Chart(catEl,{type:'bar',data:{labels:catData.map(d=>d.label),datasets:[{label:'คงคลัง',data:catData.map(d=>d.total),backgroundColor:'rgba(43,95,179,0.78)',borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#6c7689',font:{size:10}},grid:{display:false}},y:{ticks:{color:'#6c7689',font:{size:10},stepSize:1},grid:{color:'rgba(228,232,240,0.9)'},beginAtZero:true}}}});
   }
 }
 
@@ -973,42 +1067,42 @@ function renderStock(){
     const dep=getDeployedCount(p.id);
     const rep=getRepairCount(p.id);
     const low=p.min_qty>0&&tot<p.min_qty;
-    const cat=CATS[p.category]||{icon:'📦',label:p.category||''};
+    const cat=CATS[p.category]||{icon:CAT_FALLBACK,label:p.category||''};
     const qCell=(n)=>n>0?`<td class="qty-cell">${n}</td>`:`<td class="qty-cell qty-zero">—</td>`;
     return `<tr>
       <td style="color:var(--muted);font-size:11px">${p.id}</td>
       <td><div style="font-weight:500">${cat.icon} ${p.name}</div></td>
       ${qCell(c.mic)}${qCell(c.mac)}${qCell(c.donut)}${qCell(c.aon)}
       <td class="qty-cell"><strong>${tot}</strong></td>
-      ${p.is_serial?`<td style="font-size:11px;color:var(--muted)">${dep>0?`📤${dep} `:''} ${rep>0?`🔧${rep}`:''}</td>`:'<td></td>'}
-      <td>${low?`<span class="low-badge">⚠️ ต่ำ</span>`:`<span class="tag t-green">OK</span>`}</td>
+      ${p.is_serial?`<td style="font-size:11px;color:var(--muted)">${dep>0?`<svg class="cat-ic"><use href="#i-outbox"/></svg>${dep} `:''} ${rep>0?`<svg class="cat-ic"><use href="#i-wrench"/></svg>${rep}`:''}</td>`:'<td></td>'}
+      <td>${low?`<span class="low-badge"><svg class="ic"><use href="#i-alert"/></svg> ต่ำ</span>`:`<span class="tag t-green">OK</span>`}</td>
       <td style="font-size:11px;color:var(--muted)">${p.min_qty||'—'}</td>
       <td><div class="row-actions">
-        <button class="btn btn-primary btn-sm" onclick="openGR('${p.id}')">📥</button>
-        <button class="btn btn-danger btn-sm" onclick="openGI('${p.id}')">📤</button>
+        <button class="btn btn-primary btn-sm btn-icon" title="รับเข้า" onclick="openGR('${p.id}')"><svg class="ic"><use href="#i-inbox-in"/></svg></button>
+        <button class="btn btn-danger btn-sm btn-icon" title="เบิกออก" onclick="openGI('${p.id}')"><svg class="ic"><use href="#i-outbox"/></svg></button>
       </div></td>
     </tr>`;
   }).join('');
   return `
   <div class="section-header">
-    <h2>📦 สต็อกรวม</h2>
+    <h2><svg class="ic"><use href="#i-box"/></svg> สต็อกรวม</h2>
     <div style="display:flex;gap:8px">
-      <button class="btn btn-primary btn-sm" onclick="openGR()">📥 รับเข้า</button>
-      <button class="btn btn-danger btn-sm" onclick="openGI()">📤 เบิกออก</button>
+      <button class="btn btn-primary btn-sm" onclick="openGR()"><svg class="ic"><use href="#i-inbox-in"/></svg> รับเข้า</button>
+      <button class="btn btn-danger btn-sm" onclick="openGI()"><svg class="ic"><use href="#i-outbox"/></svg> เบิกออก</button>
     </div>
   </div>
   <div class="table-wrap">
     <div class="table-head">
       <div class="table-head-left"><h2>รายการสินค้า</h2><p>${prods.length} รายการ</p></div>
-      <div class="table-controls"><input class="search" oninput="filterTable(this,'tbl-stock')" placeholder="🔍 ค้นหา..."></div>
+      <div class="table-controls"><input class="search" oninput="filterTable(this,'tbl-stock')" placeholder="ค้นหา..."></div>
     </div>
     <div class="tbl-scroll"><table id="tbl-stock">
       <thead><tr>
         <th>ID</th><th>ชื่อสินค้า</th>
-        <th style="text-align:center">👤 mic</th>
-        <th style="text-align:center">👤 mac</th>
-        <th style="text-align:center">🍩 donut</th>
-        <th style="text-align:center">👤 aon</th>
+        <th style="text-align:center">mic</th>
+        <th style="text-align:center">mac</th>
+        <th style="text-align:center">donut</th>
+        <th style="text-align:center">aon</th>
         <th style="text-align:center">รวมคลัง</th>
         <th>เบิก/ซ่อม</th>
         <th>สถานะ</th><th>ต่ำสุด</th><th></th>
@@ -1030,7 +1124,7 @@ function renderUnits(){
   const rows=units.map(u=>{
     const prod=prods.find(p=>p.id===u.product_id)||{name:u.product_id,category:''};
     const proj=projs.find(p=>p.id===u.project_id);
-    const cat=CATS[prod.category]||{icon:'📦'};
+    const cat=CATS[prod.category]||{icon:CAT_FALLBACK};
     const warrantyExpired=u.warranty&&u.warranty<today();
     return `<tr>
       <td style="color:var(--muted);font-size:11px">${u.id}</td>
@@ -1041,36 +1135,36 @@ function renderUnits(){
       </td>
       <td style="font-size:12px">${u.detail||'—'}</td>
       <td style="font-size:11px;color:var(--muted)">
-        ${u.pin?`<div>🔑 ${u.pin}</div>`:''}
-        ${u.anydesk?`<div>🖥️ ${u.anydesk}</div>`:''}
+        ${u.pin?`<div><svg class="detail-ic"><use href="#i-key"/></svg>${u.pin}</div>`:''}
+        ${u.anydesk?`<div><svg class="detail-ic"><use href="#i-monitor"/></svg>${u.anydesk}</div>`:''}
         ${!u.pin&&!u.anydesk?'—':''}
       </td>
       <td>${statusTag(u.status)}</td>
-      <td style="font-size:12px">${u.person?PERSON_ICON[u.person]+' '+u.person:'—'}</td>
+      <td style="font-size:12px">${u.person||'—'}</td>
       <td style="font-size:12px;color:var(--muted)">${proj?proj.name:u.status==='in_stock'?'คลัง':'—'}</td>
       <td style="font-size:11px">
         <div>${fmtDate(u.date_in)}</div>
-        ${u.warranty?`<div style="color:${warrantyExpired?'var(--red)':'var(--muted)'}">🛡️ ${u.warranty}${warrantyExpired?' ⚠️':''}</div>`:''}
+        ${u.warranty?`<div style="color:${warrantyExpired?'var(--red)':'var(--muted)'}"><svg class="detail-ic"><use href="#i-shield"/></svg>${u.warranty}${warrantyExpired?' <svg class="detail-ic"><use href="#i-alert"/></svg>':''}</div>`:''}
       </td>
       <td><div class="row-actions">
-        <button class="btn btn-secondary btn-sm btn-icon" onclick="openQR('${u.id}')" title="QR Code">🔲</button>
-        <button class="btn btn-warning btn-sm" onclick="openUnitStatus('${u.id}')">🔄</button>
-        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteUnit('${u.id}')">🗑</button>
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="openQR('${u.id}')" title="QR Code"><svg class="ic"><use href="#i-qr"/></svg></button>
+        <button class="btn btn-warning btn-sm btn-icon" onclick="openUnitStatus('${u.id}')" title="เปลี่ยนสถานะ"><svg class="ic"><use href="#i-refresh"/></svg></button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteUnit('${u.id}')"<svg class="ic"><use href="#i-trash"/></svg></button>
       </div></td>
     </tr>`;
   }).join('');
   const catPills=Object.entries(CATS).filter(([k])=>prods.some(p=>p.category===k&&p.is_serial)).map(([k,v])=>`<div class="chip ${_unitFilter.cat===k?'active':''}" onclick="setUnitFilter('cat','${k}')">${v.icon} ${v.label}</div>`).join('');
   const statusPills=Object.entries(STATUSES).map(([k,v])=>`<div class="chip ${_unitFilter.status===k?'active':''}" onclick="setUnitFilter('status','${k}')">${v.label}</div>`).join('');
   return `
-  <div class="section-header"><h2>🔩 รายเครื่อง</h2><div style="font-size:13px;color:var(--muted)">${units.length} รายการ</div></div>
+  <div class="section-header"><h2><svg class="ic"><use href="#i-chip"/></svg> รายเครื่อง</h2><div style="font-size:13px;color:var(--muted)">${units.length} รายการ</div></div>
   <div class="chip-bar"><div class="chip ${!_unitFilter.cat?'active':''}" onclick="setUnitFilter('cat','')">ทุกหมวด</div>${catPills}</div>
   <div class="chip-bar"><div class="chip ${!_unitFilter.status?'active':''}" onclick="setUnitFilter('status','')">ทุกสถานะ</div>${statusPills}</div>
   <div class="table-wrap">
     <div class="table-head">
       <div class="table-head-left"><h2>รายเครื่อง</h2><p>${units.length} รายการ</p></div>
       <div class="table-controls">
-        <input class="search" oninput="filterTable(this,'tbl-units')" placeholder="🔍 ค้นหา SN...">
-        <button class="btn btn-secondary btn-sm" onclick="exportUnits()">📥 Export</button>
+        <input class="search" oninput="filterTable(this,'tbl-units')" placeholder="ค้นหา SN...">
+        <button class="btn btn-secondary btn-sm" onclick="exportUnits()"><svg class="ic"><use href="#i-download"/></svg> Export</button>
       </div>
     </div>
     <div class="tbl-scroll"><table id="tbl-units">
@@ -1088,14 +1182,14 @@ function openUnitStatus(unitId){
   const prod=prods.find(p=>p.id===u.product_id)||{};
   const projs=load('nx_projects')||[];
   const projOpts=projs.map(p=>`<option value="${p.id}" ${u.project_id===p.id?'selected':''}>${p.name}</option>`).join('');
-  document.getElementById('form-title').textContent='🔄 เปลี่ยนสถานะ: '+prod.name+' '+u.serial;
+  document.getElementById('form-title').textContent='เปลี่ยนสถานะ: '+prod.name+' '+u.serial;
   document.getElementById('form-body').innerHTML=`
     <input type="hidden" id="fs-unit-id" value="${unitId}">
     <div class="form-grid">
       <div class="form-group form-full"><label class="lbl">สถานะ</label>
         <select id="fs-status">${Object.entries(STATUSES).map(([k,v])=>`<option value="${k}" ${u.status===k?'selected':''}>${v.label}</option>`).join('')}</select></div>
       <div class="form-group"><label class="lbl">คนดูแล</label>
-        <select id="fs-person">${PERSONS.map(p=>`<option value="${p}" ${u.person===p?'selected':''}>${PERSON_ICON[p]} ${p}</option>`).join('')}</select></div>
+        <select id="fs-person">${PERSONS.map(p=>`<option value="${p}" ${u.person===p?'selected':''}>${p}</option>`).join('')}</select></div>
       <div class="form-group"><label class="lbl">โครงการ</label>
         <select id="fs-project"><option value="">— ไม่มี —</option>${projOpts}</select></div>
       <div class="form-group form-full"><label class="lbl">หมายเหตุ</label><input id="fs-notes" value="${u.notes||''}"></div>
@@ -1119,20 +1213,20 @@ function renderMovements(){
     <td>${movTag(m.type)}</td>
     <td><div style="font-weight:500">${m.product_name||'—'}</div><div style="font-size:11px;color:var(--muted)">${m.serial||''}</div></td>
     <td style="text-align:center;font-weight:600">${m.qty||1}</td>
-    <td style="font-size:12px">${m.person?PERSON_ICON[m.person]+' '+m.person:'—'}</td>
+    <td style="font-size:12px">${m.person||'—'}</td>
     <td style="font-size:12px;color:var(--muted)">${m.supplier_name||m.project_name||'—'}</td>
     <td style="font-size:11px;color:var(--muted);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.notes||'—'}</td>
     <td style="font-size:11px;color:var(--muted)">${m.created_by||'—'}</td>
   </tr>`).join('');
   return `
-  <div class="section-header"><h2>📋 Movement Log</h2><div style="font-size:13px;color:var(--muted)">${mvs.length} รายการ (Ledger)</div></div>
+  <div class="section-header"><h2><svg class="ic"><use href="#i-list"/></svg> Movement Log</h2><div style="font-size:13px;color:var(--muted)">${mvs.length} รายการ (Ledger)</div></div>
   <div class="info-box">ทุก action ถูกบันทึกที่นี่ — ไม่มีการแก้ไขตรงๆ ทุกยอดคำนวณจาก log นี้</div>
   <div class="table-wrap">
     <div class="table-head">
       <div class="table-head-left"><h2>ประวัติทั้งหมด</h2><p>${mvs.length} รายการ</p></div>
       <div class="table-controls">
-        <input class="search" oninput="filterTable(this,'tbl-mvs')" placeholder="🔍 ค้นหา...">
-        <button class="btn btn-secondary btn-sm" onclick="exportMovements()">📥 Export</button>
+        <input class="search" oninput="filterTable(this,'tbl-mvs')" placeholder="ค้นหา...">
+        <button class="btn btn-secondary btn-sm" onclick="exportMovements()"><svg class="ic"><use href="#i-download"/></svg> Export</button>
       </div>
     </div>
     <div class="tbl-scroll"><table id="tbl-mvs">
@@ -1152,23 +1246,23 @@ function renderProjects(){
     return `<tr>
       <td style="color:var(--muted);font-size:11px">${p.id}</td>
       <td><div style="font-weight:500">${p.name}</div><div style="font-size:11px;color:var(--muted)">${p.location||''}</div></td>
-      <td><span class="tag t-blue">${p.type==='install'?'🔧 ติดตั้ง':'🛠️ ซ่อม'}</span></td>
-      <td style="font-size:12px">${p.lead?PERSON_ICON[p.lead]+' '+p.lead:'—'}</td>
+      <td><span class="tag t-blue">${p.type==='install'?'ติดตั้ง':'ซ่อม'}</span></td>
+      <td style="font-size:12px">${p.lead||'—'}</td>
       <td style="text-align:center;font-weight:600">${atProj}</td>
       <td>${sTag}</td>
       <td style="font-size:11px;color:var(--muted)">${fmtDate(p.date_start)}</td>
       <td><div class="row-actions">
-        <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditProject('${p.id}')">✏️</button>
-        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteProject('${p.id}')">🗑</button>
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditProject('${p.id}')"<svg class="ic"><use href="#i-edit"/></svg></button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteProject('${p.id}')"<svg class="ic"><use href="#i-trash"/></svg></button>
       </div></td>
     </tr>`;
   }).join('');
   return `
-  <div class="section-header"><h2>🏗️ โครงการ</h2><div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" onclick="importAllProjects()">📥 นำเข้าโครงการทั้งหมด</button><button class="btn btn-primary btn-sm" onclick="openAddProject()">+ เพิ่มโครงการ</button></div></div>
+  <div class="section-header"><h2><svg class="ic"><use href="#i-building"/></svg> โครงการ</h2><div style="display:flex;gap:8px"><button class="btn btn-secondary btn-sm" onclick="importAllProjects()"><svg class="ic"><use href="#i-download"/></svg> นำเข้าโครงการทั้งหมด</button><button class="btn btn-primary btn-sm" onclick="openAddProject()">+ เพิ่มโครงการ</button></div></div>
   <div class="table-wrap">
     <div class="table-head">
       <div class="table-head-left"><h2>รายการโครงการ</h2><p>${projs.length} โครงการ</p></div>
-      <div class="table-controls"><input class="search" oninput="filterTable(this,'tbl-proj')" placeholder="🔍 ค้นหา..."></div>
+      <div class="table-controls"><input class="search" oninput="filterTable(this,'tbl-proj')" placeholder="ค้นหา..."></div>
     </div>
     <div class="tbl-scroll"><table id="tbl-proj">
       <thead><tr><th>ID</th><th>ชื่อโครงการ</th><th>ประเภท</th><th>หัวหน้า</th><th>อุปกรณ์</th><th>สถานะ</th><th>วันที่เริ่ม</th><th></th></tr></thead>
@@ -1186,16 +1280,16 @@ function renderSuppliers(){
     <td style="font-size:12px;color:var(--muted)">${s.contact||'—'}</td>
     <td style="font-size:12px;color:var(--muted)">${s.notes||'—'}</td>
     <td><div class="row-actions">
-      <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditSupplier('${s.id}')">✏️</button>
-      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteSupplier('${s.id}')">🗑</button>
+      <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditSupplier('${s.id}')"<svg class="ic"><use href="#i-edit"/></svg></button>
+      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteSupplier('${s.id}')"<svg class="ic"><use href="#i-trash"/></svg></button>
     </div></td>
   </tr>`).join('');
   return `
-  <div class="section-header"><h2>🏭 Supplier</h2><button class="btn btn-primary btn-sm" onclick="openAddSupplier()">+ เพิ่ม Supplier</button></div>
+  <div class="section-header"><h2><svg class="ic"><use href="#i-factory"/></svg> Supplier</h2><button class="btn btn-primary btn-sm" onclick="openAddSupplier()">+ เพิ่ม Supplier</button></div>
   <div class="table-wrap">
     <div class="table-head">
       <div class="table-head-left"><h2>รายการ Supplier</h2><p>${sups.length} ราย</p></div>
-      <div class="table-controls"><input class="search" oninput="filterTable(this,'tbl-sup')" placeholder="🔍 ค้นหา..."></div>
+      <div class="table-controls"><input class="search" oninput="filterTable(this,'tbl-sup')" placeholder="ค้นหา..."></div>
     </div>
     <div class="tbl-scroll"><table id="tbl-sup">
       <thead><tr><th>ID</th><th>ชื่อ</th><th>ติดต่อ</th><th>หมายเหตุ</th><th></th></tr></thead>
@@ -1208,7 +1302,7 @@ function renderSuppliers(){
 function renderProducts(){
   const prods=load('nx_products')||[];
   const rows=prods.map(p=>{
-    const cat=CATS[p.category]||{icon:'📦',label:p.category||''};
+    const cat=CATS[p.category]||{icon:CAT_FALLBACK,label:p.category||''};
     const tot=getTotalStock(p.id);
     const thumb=p.images&&p.images[0]?`<img src="${p.images[0]}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;vertical-align:middle;margin-right:8px">`:'';
     return `<tr>
@@ -1219,19 +1313,19 @@ function renderProducts(){
       <td style="font-size:12px;color:var(--muted)">${p.unit||'ชิ้น'}</td>
       <td style="font-size:12px;color:var(--muted)">${p.min_qty||'—'}</td>
       <td><div class="row-actions">
-        <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditProduct('${p.id}')">✏️</button>
-        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteProduct('${p.id}')">🗑</button>
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditProduct('${p.id}')"><svg class="ic"><use href="#i-edit"/></svg></button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteProduct('${p.id}')"><svg class="ic"><use href="#i-trash"/></svg></button>
       </div></td>
     </tr>`;
   }).join('');
   return `
-  <div class="section-header"><h2>🗂️ รายการสินค้า</h2><button class="btn btn-primary btn-sm" onclick="openAddProduct()">+ เพิ่มสินค้า</button></div>
+  <div class="section-header"><h2><svg class="ic"><use href="#i-folder"/></svg> รายการสินค้า</h2><button class="btn btn-primary btn-sm" onclick="openAddProduct()">+ เพิ่มสินค้า</button></div>
   <div class="table-wrap">
     <div class="table-head">
       <div class="table-head-left"><h2>สินค้าทั้งหมด</h2><p>${prods.length} รายการ</p></div>
       <div class="table-controls">
-        <input class="search" oninput="filterTable(this,'tbl-prod')" placeholder="🔍 ค้นหา...">
-        <button class="btn btn-secondary btn-sm" onclick="exportProducts()">📥 Export</button>
+        <input class="search" oninput="filterTable(this,'tbl-prod')" placeholder="ค้นหา...">
+        <button class="btn btn-secondary btn-sm" onclick="exportProducts()"><svg class="ic"><use href="#i-download"/></svg> Export</button>
       </div>
     </div>
     <div class="tbl-scroll"><table id="tbl-prod">
@@ -1242,9 +1336,9 @@ function renderProducts(){
 }
 
 // ==================== GR / GI / RETURN PAGE STUBS ====================
-function renderGR(){return `<div class="empty-state"><div class="es-icon">📥</div><h3>รับสินค้าเข้า</h3><p>คลิกปุ่มด้านล่างเพื่อบันทึกรับสินค้าจาก Supplier</p><button class="btn btn-primary" style="margin-top:16px" onclick="openGR()">📥 รับสินค้าเข้า</button></div>`;}
-function renderGI(){return `<div class="empty-state"><div class="es-icon">📤</div><h3>เบิกสินค้าออก</h3><p>คลิกปุ่มด้านล่างเพื่อเบิกสินค้าไปโครงการ</p><button class="btn btn-danger" style="margin-top:16px" onclick="openGI()">📤 เบิกออก</button></div>`;}
-function renderRet(){return `<div class="empty-state"><div class="es-icon">🔁</div><h3>รับสินค้าคืน</h3><p>คลิกปุ่มด้านล่างเพื่อรับสินค้ากลับจากโครงการ</p><button class="btn btn-success" style="margin-top:16px" onclick="openRet()">🔁 รับคืน</button></div>`;}
+function renderGR(){return `<div class="empty-state"><div class="es-icon"><svg class="hero-ic"><use href="#i-inbox-in"/></svg></div><h3>รับสินค้าเข้า</h3><p>คลิกปุ่มด้านล่างเพื่อบันทึกรับสินค้าจาก Supplier</p><button class="btn btn-primary" style="margin-top:16px" onclick="openGR()"><svg class="ic"><use href="#i-inbox-in"/></svg> รับสินค้าเข้า</button></div>`;}
+function renderGI(){return `<div class="empty-state"><div class="es-icon"><svg class="hero-ic"><use href="#i-outbox"/></svg></div><h3>เบิกสินค้าออก</h3><p>คลิกปุ่มด้านล่างเพื่อเบิกสินค้าไปโครงการ</p><button class="btn btn-danger" style="margin-top:16px" onclick="openGI()"><svg class="ic"><use href="#i-outbox"/></svg> เบิกออก</button></div>`;}
+function renderRet(){return `<div class="empty-state"><div class="es-icon"><svg class="hero-ic"><use href="#i-return"/></svg></div><h3>รับสินค้าคืน</h3><p>คลิกปุ่มด้านล่างเพื่อรับสินค้ากลับจากโครงการ</p><button class="btn btn-success" style="margin-top:16px" onclick="openRet()"><svg class="ic"><use href="#i-return"/></svg> รับคืน</button></div>`;}
 
 // ==================== SETTINGS PAGE ====================
 function renderSettings(){
@@ -1252,45 +1346,66 @@ function renderSettings(){
   const fbCfg=fbRaw?JSON.parse(fbRaw):{};
   const line=localStorage.getItem('nx_line_token')||'';
   return `
-  <div class="section-header"><h2>⚙️ ตั้งค่า</h2></div>
+  <div class="section-header"><h2><svg class="ic"><use href="#i-settings"/></svg> ตั้งค่า</h2></div>
   <div class="table-wrap" style="padding:20px">
-    <h3 style="margin-bottom:16px;font-size:15px">🔥 Firebase</h3>
+    <h3 style="margin-bottom:16px;font-size:15px"><svg class="ic"><use href="#i-database"/></svg> Firebase</h3>
     <div class="form-grid">
       <div class="form-group form-full"><label class="lbl">API Key</label><input id="cfg-apikey" value="${fbCfg.apiKey||''}" placeholder="AIzaSy..."></div>
       <div class="form-group form-full"><label class="lbl">Database URL</label><input id="cfg-dburl" value="${fbCfg.databaseURL||''}" placeholder="https://xxx-default-rtdb.firebaseio.com"></div>
       <div class="form-group"><label class="lbl">Project ID</label><input id="cfg-projid" value="${fbCfg.projectId||''}"></div>
     </div>
     <div style="margin-top:14px;display:flex;gap:10px">
-      <button class="btn btn-primary" onclick="saveFirebaseCfg()">🔥 เชื่อมต่อ Firebase</button>
+      <button class="btn btn-primary" onclick="saveFirebaseCfg()"><svg class="ic"><use href="#i-database"/></svg> เชื่อมต่อ Firebase</button>
       ${fbRaw?`<button class="btn btn-secondary" onclick="disconnectFb()">ยกเลิก</button>`:''}
     </div>
   </div>
   <div class="table-wrap" style="padding:20px;margin-top:16px">
-    <h3 style="margin-bottom:16px;font-size:15px">🔔 Line Notify</h3>
+    <h3 style="margin-bottom:16px;font-size:15px"><svg class="ic"><use href="#i-bell"/></svg> Line Notify</h3>
     <div class="form-grid">
       <div class="form-group form-full"><label class="lbl">Token</label><input id="cfg-line" value="${line}" placeholder="Line Notify Token..."></div>
     </div>
-    <button class="btn btn-primary" style="margin-top:14px" onclick="saveLineCfg()">💾 บันทึก</button>
+    <button class="btn btn-primary" style="margin-top:14px" onclick="saveLineCfg()"><svg class="ic"><use href="#i-save"/></svg> บันทึก</button>
   </div>
   <div class="table-wrap" style="padding:20px;margin-top:16px">
-    <h3 style="margin-bottom:16px;font-size:15px">🗑️ รีเซ็ตข้อมูล</h3>
-    <button class="btn btn-danger" onclick="clearAllData()">⚠️ ล้างข้อมูลทั้งหมด</button>
+    <h3 style="margin-bottom:16px;font-size:15px"><svg class="ic"><use href="#i-trash"/></svg> รีเซ็ตข้อมูล</h3>
+    <button class="btn btn-danger" onclick="clearAllData()"><svg class="ic"><use href="#i-alert"/></svg> ล้างข้อมูลทั้งหมด</button>
   </div>`;
 }
 
 function saveFirebaseCfg(){
   const cfg={apiKey:g('cfg-apikey'),databaseURL:g('cfg-dburl'),projectId:g('cfg-projid'),authDomain:g('cfg-projid')+'.firebaseapp.com',storageBucket:g('cfg-projid')+'.appspot.com',messagingSenderId:'',appId:''};
-  if(!cfg.apiKey||!cfg.databaseURL){toast('⚠️ กรอก API Key และ Database URL ก่อน');return;}
+  if(!cfg.apiKey||!cfg.databaseURL){toast('กรอก API Key และ Database URL ก่อน');return;}
   localStorage.setItem('nx_fb_config',JSON.stringify(cfg));
-  initFirebase(cfg);toast('🔥 เชื่อมต่อ Firebase แล้ว');renderPage('settings');
+  initFirebase(cfg);toast('เชื่อมต่อ Firebase แล้ว');renderPage('settings');
 }
 function disconnectFb(){localStorage.removeItem('nx_fb_config');location.reload();}
-function saveLineCfg(){localStorage.setItem('nx_line_token',g('cfg-line'));toast('💾 บันทึกแล้ว');}
+function saveLineCfg(){localStorage.setItem('nx_line_token',g('cfg-line'));toast('บันทึกแล้ว');}
 function clearAllData(){
   showConfirm('ล้างข้อมูลทั้งหมด?','ข้อมูลจะหายถาวร ไม่สามารถย้อนกลับได้',()=>{
     DB_KEYS.forEach(k=>{ _cache[k]=k==='nx_stock'?{}:[]; localStorage.removeItem(k); if(db) db.ref('nextate/'+k).remove(); });
     toast('ล้างข้อมูลแล้ว');renderPage(currentPage);
   },'ล้างข้อมูล');
+}
+
+// ==================== SEARCHABLE PROJECT SELECT ====================
+const _projOptCache = {}; // selectId → [{value,text}]
+function buildProjectOptions(selectId, projs){
+  _projOptCache[selectId] = projs.map(p=>({
+    value: p.id,
+    text: (p.status==='done'?'[เสร็จ] ':'')+p.name
+  }));
+  renderProjectOptions(selectId, '');
+}
+function renderProjectOptions(selectId, query){
+  const sel = document.getElementById(selectId); if(!sel) return;
+  const opts = _projOptCache[selectId]||[];
+  const q = query.trim().toLowerCase();
+  const filtered = q ? opts.filter(o=>o.text.toLowerCase().includes(q)) : opts;
+  sel.innerHTML = '<option value="">— เลือกโครงการ —</option>' +
+    filtered.map(o=>`<option value="${o.value}">${o.text}</option>`).join('');
+}
+function filterProjectSelect(selectId, query){
+  renderProjectOptions(selectId, query);
 }
 
 // ==================== OPEN GR MODAL ====================
@@ -1299,7 +1414,7 @@ function openGR(presetProductId){
   const prods=load('nx_products')||[];
   document.getElementById('gr-date').value=today();
   document.getElementById('gr-supplier').innerHTML='<option value="">— ไม่ระบุ —</option>'+sups.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-  document.getElementById('gr-product').innerHTML=prods.map(p=>`<option value="${p.id}" ${p.id===presetProductId?'selected':''}>${CATS[p.category]?.icon||'📦'} ${p.name}</option>`).join('');
+  document.getElementById('gr-product').innerHTML=prods.map(p=>`<option value="${p.id}" ${p.id===presetProductId?'selected':''}>${p.name}</option>`).join('');
   document.getElementById('gr-serials').value='';
   document.getElementById('gr-serial-detail').value='';
   document.getElementById('gr-notes').value='';
@@ -1315,18 +1430,40 @@ function setGrMode(mode){
   document.getElementById('gr-mode-qty').className='btn btn-sm '+(mode==='qty'?'btn-primary':'btn-secondary');
   document.getElementById('gr-mode-sn').className='btn btn-sm '+(mode==='sn'?'btn-primary':'btn-secondary');
 }
+const GR_CAT_DEVICE = ['tablet','computer'];
+const GR_CAT_SIM    = ['sim'];
+function updateGrFields(cat){
+  const isDevice   = GR_CAT_DEVICE.includes(cat);
+  const isSim      = GR_CAT_SIM.includes(cat);
+  const isStandard = !isSim; // device + all others show brand/model/warranty/store
+  ['qty','sn'].forEach(m=>{
+    const d=document.getElementById(`gr-${m}-f-device`);
+    const s=document.getElementById(`gr-${m}-f-sim`);
+    const st=document.getElementById(`gr-${m}-f-standard`);
+    if(d)  d.style.display  = isDevice   ? 'block' : 'none';
+    if(s)  s.style.display  = isSim      ? 'block' : 'none';
+    if(st) st.style.display = isStandard ? 'block' : 'none';
+  });
+  // SIM: label ใน SN textarea
+  const snLabel = document.querySelector('label[for="gr-serials"], #gr-sn-mode .lbl');
+  if(snLabel && isSim) snLabel.textContent = 'เบอร์โทรซิม (1 เบอร์ต่อบรรทัด)';
+  else if(snLabel)     snLabel.textContent = 'Serial Numbers (1 ต่อบรรทัด)';
+}
 function onGrProductChange(){
   const pid=g('gr-product');
   const prods=load('nx_products')||[];
   const prod=prods.find(p=>p.id===pid);
   document.getElementById('gr-serial-section').style.display=prod?.is_serial?'block':'none';
   document.getElementById('gr-bulk-section').style.display=(!prod||!prod.is_serial)?'block':'none';
-  if(prod?.is_serial) setGrMode('qty'); // default to qty mode for serial items
+  if(prod?.is_serial){
+    setGrMode('qty');
+    updateGrFields(prod.category||'');
+  }
 }
 
 // ==================== SAVE GR ====================
 function saveGR(){
-  const pid=g('gr-product');if(!pid){toast('⚠️ เลือกสินค้าก่อน');return;}
+  const pid=g('gr-product');if(!pid){toast('เลือกสินค้าก่อน');return;}
   const prods=load('nx_products')||[];
   const prod=prods.find(p=>p.id===pid);if(!prod){return;}
   const suppId=g('gr-supplier');
@@ -1342,10 +1479,16 @@ function saveGR(){
     if(_grMode==='qty'){
       // QTY MODE — auto-generate serial IDs
       const count=parseInt(g('gr-qty-count'))||0;
-      if(count<1){toast('⚠️ กรอกจำนวนอย่างน้อย 1');return;}
+      if(count<1){toast('กรอกจำนวนอย่างน้อย 1');return;}
       person=g('gr-person-qty');
-      detail=g('gr-qty-detail');
-      pin=g('gr-qty-pin')||'';
+      // SIM: เบอร์โทรเก็บใน detail, ไม่มี PIN/IMEI
+      if(GR_CAT_SIM.includes(prod.category)){
+        detail=g('gr-qty-phone')||g('gr-qty-detail');
+        pin='';
+      } else {
+        detail=g('gr-qty-detail');
+        pin=g('gr-qty-pin')||'';
+      }
       anydesk='';
       brand=g('gr-qty-brand')||'';
       model=g('gr-qty-model')||'';
@@ -1362,10 +1505,11 @@ function saveGR(){
       // SN MODE — manual serial entry
       const rawSerials=document.getElementById('gr-serials').value.trim();
       serials=rawSerials.split('\n').map(s=>s.trim()).filter(Boolean);
-      if(!serials.length){toast('⚠️ กรอก Serial Number อย่างน้อย 1 ตัว');return;}
+      if(!serials.length){toast('กรอก Serial Number อย่างน้อย 1 ตัว');return;}
       person=g('gr-person-serial');
       detail=g('gr-serial-detail');
-      pin=g('gr-sn-pin')||'';
+      // SIM: serial = เบอร์โทร, ไม่มี PIN/IMEI
+      pin=GR_CAT_SIM.includes(prod.category)?'':g('gr-sn-pin')||'';
       anydesk='';
       brand=g('gr-sn-brand')||'';
       model=g('gr-sn-model')||'';
@@ -1386,18 +1530,18 @@ function saveGR(){
       mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date,type:'GR',product_id:pid,product_name:prod.name,unit_id:u.id,serial:u.serial,qty:1,person,supplier_id:suppId,supplier_name:sup?.name||'',project_name:'',notes,created_by:currentUser()});
     });
     save('nx_movements',mvs);
-    toast(`📥 รับเข้า ${newUnits.length} ชิ้น ✅`);
+    toast(`รับเข้า ${newUnits.length} ชิ้น`);
   } else {
     const qtys={mic:parseInt(g('gr-qty-mic'))||0,mac:parseInt(g('gr-qty-mac'))||0,donut:parseInt(g('gr-qty-donut'))||0,aon:parseInt(g('gr-qty-aon'))||0};
     const total=qtys.mic+qtys.mac+qtys.donut+qtys.aon;
-    if(!total){toast('⚠️ กรอกจำนวนอย่างน้อย 1');return;}
+    if(!total){toast('กรอกจำนวนอย่างน้อย 1');return;}
     const stock=load('nx_stock')||{};
     if(!stock[pid]) stock[pid]={mic:0,mac:0,donut:0,aon:0};
     PERSONS.forEach(p=>{ stock[pid][p]=(stock[pid][p]||0)+(qtys[p]||0); });
     save('nx_stock',stock);
     mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date,type:'GR',product_id:pid,product_name:prod.name,qty:total,qty_detail:qtys,supplier_id:suppId,supplier_name:sup?.name||'',notes,created_by:currentUser()});
     save('nx_movements',mvs);
-    toast(`📥 รับเข้า ${total} ${prod.unit||'ชิ้น'} ✅`);
+    toast(`รับเข้า ${total} ${prod.unit||'ชิ้น'}`);
   }
   closeModal('modal-gr');renderPage(currentPage);
 }
@@ -1414,7 +1558,7 @@ function openQR(unitId){
   const prod=prods.find(p=>p.id===u.product_id)||{};
   const projs=load('nx_projects')||[];
   const proj=projs.find(p=>p.id===u.project_id);
-  const cat=CATS[prod.category]||{icon:'📦'};
+  const cat=CATS[prod.category]||{icon:CAT_FALLBACK};
 
   // QR = URL that opens scan page for this unit
   const lines=getScanUrl(unitId);
@@ -1429,17 +1573,17 @@ function openQR(unitId){
   document.getElementById('qr-info').innerHTML=`
     <div style="font-weight:700;font-size:15px;margin-bottom:8px">${cat.icon} ${prod.name}</div>
     ${u.brand||u.model?`<div style="color:var(--muted);margin-bottom:6px">${[u.brand,u.model].filter(Boolean).join(' / ')}</div>`:''}
-    <div>📋 <strong>SKU:</strong> ${prod.sku||prod.id}</div>
-    <div>🔖 <strong>Serial:</strong> ${u.serial||u.id}</div>
-    ${u.imei1?`<div>📱 <strong>IMEI1:</strong> ${u.imei1}</div>`:''}
-    ${u.imei2?`<div>📱 <strong>IMEI2:</strong> ${u.imei2}</div>`:''}
-    ${u.pin?`<div>🔑 <strong>PIN:</strong> ${u.pin}</div>`:''}
-    ${u.anydesk?`<div>🖥️ <strong>Anydesk:</strong> ${u.anydesk}</div>`:''}
-    <div>🟢 <strong>สถานะ:</strong> ${STATUSES[u.status]?.label||u.status}</div>
-    <div>👤 <strong>คนดูแล:</strong> ${u.person||'—'}</div>
-    ${proj?`<div>🏗️ <strong>โครงการ:</strong> ${proj.name}</div>`:''}
-    ${u.warranty?`<div>🛡️ <strong>ประกันหมด:</strong> ${u.warranty}</div>`:''}
-    ${u.store?`<div>🛒 <strong>ซื้อจาก:</strong> ${u.store}</div>`:''}
+    <div><svg class="detail-ic"><use href="#i-tag"/></svg><strong>SKU:</strong> ${prod.sku||prod.id}</div>
+    <div><svg class="detail-ic"><use href="#i-hash"/></svg><strong>Serial:</strong> ${u.serial||u.id}</div>
+    ${u.imei1?`<div><svg class="detail-ic"><use href="#i-phone"/></svg><strong>IMEI1:</strong> ${u.imei1}</div>`:''}
+    ${u.imei2?`<div><svg class="detail-ic"><use href="#i-phone"/></svg><strong>IMEI2:</strong> ${u.imei2}</div>`:''}
+    ${u.pin?`<div><svg class="detail-ic"><use href="#i-key"/></svg><strong>PIN:</strong> ${u.pin}</div>`:''}
+    ${u.anydesk?`<div><svg class="detail-ic"><use href="#i-monitor"/></svg><strong>Anydesk:</strong> ${u.anydesk}</div>`:''}
+    <div><svg class="detail-ic"><use href="#i-circle"/></svg><strong>สถานะ:</strong> ${STATUSES[u.status]?.label||u.status}</div>
+    <div><svg class="detail-ic"><use href="#i-user"/></svg><strong>คนดูแล:</strong> ${u.person||'—'}</div>
+    ${proj?`<div><svg class="detail-ic"><use href="#i-building"/></svg><strong>โครงการ:</strong> ${proj.name}</div>`:''}
+    ${u.warranty?`<div><svg class="detail-ic"><use href="#i-shield"/></svg><strong>ประกันหมด:</strong> ${u.warranty}</div>`:''}
+    ${u.store?`<div><svg class="detail-ic"><use href="#i-cart"/></svg><strong>ซื้อจาก:</strong> ${u.store}</div>`:''}
     <div style="margin-top:6px;color:var(--muted);font-size:11px">รับเข้า: ${fmtDate(u.date_in)}</div>`;
 }
 function printQR(){
@@ -1480,22 +1624,22 @@ function renderScanUnit(unitId){
   const card=document.getElementById('scan-unit-card');
   const action=document.getElementById('scan-action-section');
   const syncLabel=document.getElementById('scan-sync-label');
-  if(syncLabel) syncLabel.textContent='✅ ข้อมูลพร้อมใช้งาน';
+  if(syncLabel) syncLabel.textContent='ข้อมูลพร้อมใช้งาน';
 
   if(!u){
     card.innerHTML=`
       <div style="text-align:center;padding:24px">
-        <div style="font-size:36px;margin-bottom:10px">❌</div>
+        <svg class="ic" style="width:36px;height:36px;color:var(--red);margin-bottom:10px"><use href="#i-x-circle"/></svg>
         <div style="font-weight:600;color:var(--red);margin-bottom:6px">ไม่พบข้อมูลอุปกรณ์นี้</div>
         <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Unit ID: ${unitId}</div>
-        <button class="btn btn-secondary btn-sm" onclick="window.location.href=window.location.pathname">← กลับหน้าหลัก</button>
+        <button class="btn btn-secondary btn-sm" onclick="window.location.href=window.location.pathname"><svg class="ic"><use href="#i-arrow-left"/></svg> กลับหน้าหลัก</button>
       </div>`;
-    if(syncLabel) syncLabel.textContent='❌ ไม่พบข้อมูล';
+    if(syncLabel) syncLabel.textContent='ไม่พบข้อมูล';
     return;
   }
   const prod=prods.find(p=>p.id===u.product_id)||{name:'ไม่ทราบ',category:''};
   const proj=projs.find(p=>p.id===u.project_id);
-  const cat=CATS[prod.category]||{icon:'📦'};
+  const cat=CATS[prod.category]||{icon:CAT_FALLBACK};
   const warrantyExpired=u.warranty&&u.warranty<today();
 
   card.innerHTML=`
@@ -1530,15 +1674,15 @@ function renderScanUnit(unitId){
       </div>
       <div style="background:var(--card2);border-radius:8px;padding:10px">
         <div style="color:var(--muted);font-size:10px;margin-bottom:3px">คนดูแล</div>
-        <div style="font-weight:600">${u.person?PERSON_ICON[u.person]+' '+u.person:'—'}</div>
+        <div style="font-weight:600">${u.person||'—'}</div>
       </div>
       ${proj?`<div style="background:var(--card2);border-radius:8px;padding:10px;grid-column:1/-1">
         <div style="color:var(--muted);font-size:10px;margin-bottom:3px">โครงการปัจจุบัน</div>
-        <div style="font-weight:600">🏗️ ${proj.name}</div>
+        <div style="font-weight:600"><svg class="ic"><use href="#i-building"/></svg> ${proj.name}</div>
       </div>`:''}
-      ${u.warranty?`<div style="background:${warrantyExpired?'rgba(239,68,68,.1)':'var(--card2)'};border-radius:8px;padding:10px;grid-column:1/-1">
+      ${u.warranty?`<div style="background:${warrantyExpired?'var(--red-soft)':'var(--card2)'};border-radius:8px;padding:10px;grid-column:1/-1">
         <div style="color:var(--muted);font-size:10px;margin-bottom:3px">วันหมดประกัน</div>
-        <div style="font-weight:600;color:${warrantyExpired?'var(--red)':'var(--text)'}">${u.warranty} ${warrantyExpired?'⚠️ หมดแล้ว':''}</div>
+        <div style="font-weight:600;color:${warrantyExpired?'var(--red)':'var(--text)'}">${u.warranty} ${warrantyExpired?'(หมดอายุแล้ว)':''}</div>
       </div>`:''}
       ${u.store?`<div style="background:var(--card2);border-radius:8px;padding:10px">
         <div style="color:var(--muted);font-size:10px;margin-bottom:3px">ซื้อจาก</div>
@@ -1546,9 +1690,8 @@ function renderScanUnit(unitId){
       </div>`:''}
     </div>`;
 
-  // Load projects into scan dropdown
-  const projSel=document.getElementById('scan-project');
-  projSel.innerHTML='<option value="">— เลือกโครงการ —</option>'+projs.map(p=>`<option value="${p.id}">${p.status==='done'?'✅ ':'🏗️ '}${p.name}</option>`).join('');
+  // Load projects into scan dropdown (searchable)
+  buildProjectOptions('scan-project', projs);
 
   // Show action section based on status
   action.style.display='block';
@@ -1568,19 +1711,19 @@ function renderScanUnit(unitId){
 function getScanGps(){
   const st=document.getElementById('scan-gps-status');
   if(!navigator.geolocation){if(st)st.textContent='ไม่รองรับ GPS';return;}
-  if(st)st.textContent='⏳ กำลังระบุ...';
+  if(st)st.textContent='กำลังระบุ...';
   navigator.geolocation.getCurrentPosition(pos=>{
     document.getElementById('scan-lat').value=pos.coords.latitude.toFixed(6);
     document.getElementById('scan-lng').value=pos.coords.longitude.toFixed(6);
-    if(st)st.textContent=`✅ ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
-  },()=>{if(st)st.textContent='❌ ระบุตำแหน่งไม่ได้';});
+    if(st)st.textContent=`${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+  },()=>{if(st)st.textContent='ระบุตำแหน่งไม่ได้';});
 }
 function submitScanGI(){
   const unitId=_scanUnitId;
   const person=document.getElementById('scan-person').value;
   const projId=document.getElementById('scan-project').value;
-  if(!person){toast('⚠️ กรุณาเลือกผู้รับอุปกรณ์');return;}
-  if(!projId){toast('⚠️ กรุณาเลือกโครงการก่อน');return;}
+  if(!person){toast('กรุณาเลือกผู้รับอุปกรณ์');return;}
+  if(!projId){toast('กรุณาเลือกโครงการก่อน');return;}
   const units=load('nx_units')||[];
   const u=units.find(x=>x.id===unitId);if(!u)return;
   const prods=load('nx_products')||[];
@@ -1609,22 +1752,22 @@ function submitScanGI(){
 function getGpsLocation(){
   const st=document.getElementById('gi-gps-status');
   if(!navigator.geolocation){if(st)st.textContent='เบราว์เซอร์ไม่รองรับ GPS';return;}
-  if(st)st.textContent='⏳ กำลังระบุตำแหน่ง...';
+  if(st)st.textContent='กำลังระบุตำแหน่ง...';
   navigator.geolocation.getCurrentPosition(
     pos=>{
       const lat=pos.coords.latitude.toFixed(6);
       const lng=pos.coords.longitude.toFixed(6);
       document.getElementById('gi-lat').value=lat;
       document.getElementById('gi-lng').value=lng;
-      if(st)st.textContent=`✅ ${lat}, ${lng}`;
+      if(st)st.textContent=`${lat}, ${lng}`;
     },
-    err=>{if(st)st.textContent='❌ ไม่สามารถระบุตำแหน่งได้';}
+    err=>{if(st)st.textContent='ไม่สามารถระบุตำแหน่งได้';}
   );
 }
 
 // ==================== EXPORT DATA ====================
 function exportCSV(data,filename){
-  if(!data.length){toast('⚠️ ไม่มีข้อมูลให้ export');return;}
+  if(!data.length){toast('ไม่มีข้อมูลให้ export');return;}
   const keys=Object.keys(data[0]);
   const rows=[keys.join(','),...data.map(row=>keys.map(k=>{
     let v=row[k]??'';
@@ -1635,7 +1778,7 @@ function exportCSV(data,filename){
   const blob=new Blob(['﻿'+rows.join('\n')],{type:'text/csv;charset=utf-8'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');a.href=url;a.download=filename;a.click();
-  URL.revokeObjectURL(url);toast('📥 Export แล้ว ✅');
+  URL.revokeObjectURL(url);toast('Export แล้ว');
 }
 function exportUnits(){
   const units=load('nx_units')||[];
@@ -1664,8 +1807,9 @@ function openGI(presetProductId){
   const projs=load('nx_projects')||[];
   const prods=load('nx_products')||[];
   document.getElementById('gi-date').value=today();
-  document.getElementById('gi-project').innerHTML='<option value="">— เลือกโครงการ —</option>'+projs.map(p=>`<option value="${p.id}">${p.status==='done'?'✅ ':'🏗️ '}${p.name}</option>`).join('');
-  document.getElementById('gi-product').innerHTML=prods.map(p=>`<option value="${p.id}" ${p.id===presetProductId?'selected':''}>${CATS[p.category]?.icon||'📦'} ${p.name}</option>`).join('');
+  buildProjectOptions('gi-project', projs);
+  const giSearch=document.getElementById('gi-project-search');if(giSearch)giSearch.value='';
+  document.getElementById('gi-product').innerHTML=prods.map(p=>`<option value="${p.id}" ${p.id===presetProductId?'selected':''}>${p.name}</option>`).join('');
   document.getElementById('gi-notes').value='';
   document.getElementById('gi-anydesk').value='';
   document.getElementById('gi-lat').value='';
@@ -1685,7 +1829,7 @@ function onGiProductChange(){
     document.getElementById('gi-unit-list').innerHTML=units.length?units.map(u=>`
       <label class="unit-item">
         <input type="checkbox" class="gi-unit-cb" value="${u.id}">
-        <div class="unit-info"><div class="u-name">${u.serial||u.id}</div><div class="u-sub">${u.detail||''} · ${PERSON_ICON[u.person]||''} ${u.person||''}</div></div>
+        <div class="unit-info"><div class="u-name">${u.serial||u.id}</div><div class="u-sub">${u.detail||''} · ${u.person||''}</div></div>
         ${statusTag(u.status)}
       </label>`).join(''):'<div style="color:var(--muted);padding:12px;font-size:13px">ไม่มีรายการคงคลัง</div>';
   } else {
@@ -1698,8 +1842,8 @@ function onGiProductChange(){
 
 // ==================== SAVE GI ====================
 function saveGI(){
-  const pid=g('gi-product');if(!pid){toast('⚠️ เลือกสินค้าก่อน');return;}
-  const projId=g('gi-project');if(!projId){toast('⚠️ เลือกโครงการก่อน');return;}
+  const pid=g('gi-product');if(!pid){toast('เลือกสินค้าก่อน');return;}
+  const projId=g('gi-project');if(!projId){toast('เลือกโครงการก่อน');return;}
   const prods=load('nx_products')||[];
   const prod=prods.find(p=>p.id===pid);if(!prod)return;
   const projs=load('nx_projects')||[];
@@ -1715,7 +1859,7 @@ function saveGI(){
 
   if(prod.is_serial){
     const checked=[...document.querySelectorAll('.gi-unit-cb:checked')].map(c=>c.value);
-    if(!checked.length){toast('⚠️ เลือกรายเครื่องอย่างน้อย 1 ชิ้น');return;}
+    if(!checked.length){toast('เลือกรายเครื่องอย่างน้อย 1 ชิ้น');return;}
     const units=load('nx_units')||[];
     checked.forEach(uid=>{
       const idx=units.findIndex(u=>u.id===uid);
@@ -1725,21 +1869,21 @@ function saveGI(){
     });
     save('nx_units',units);
     save('nx_movements',mvs);
-    toast(`📤 เบิกออก ${checked.length} ชิ้น ✅`);
+    toast(`เบิกออก ${checked.length} ชิ้น`);
   } else {
     const qtys={mic:parseInt(g('gi-qty-mic'))||0,mac:parseInt(g('gi-qty-mac'))||0,donut:parseInt(g('gi-qty-donut'))||0,aon:parseInt(g('gi-qty-aon'))||0};
     const total=qtys.mic+qtys.mac+qtys.donut+qtys.aon;
-    if(!total){toast('⚠️ กรอกจำนวนที่เบิก');return;}
+    if(!total){toast('กรอกจำนวนที่เบิก');return;}
     const stock=load('nx_stock')||{};
     if(!stock[pid]) stock[pid]={mic:0,mac:0,donut:0,aon:0};
     for(const p of PERSONS){
-      if((stock[pid][p]||0)<(qtys[p]||0)){toast(`⚠️ สต็อกที่ ${p} ไม่พอ (มี ${stock[pid][p]||0})`);return;}
+      if((stock[pid][p]||0)<(qtys[p]||0)){toast(`สต็อกที่ ${p} ไม่พอ (มี ${stock[pid][p]||0})`);return;}
     }
     PERSONS.forEach(p=>{ stock[pid][p]=(stock[pid][p]||0)-(qtys[p]||0); });
     save('nx_stock',stock);
     mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date,type:'GI',product_id:pid,product_name:prod.name,qty:total,qty_detail:qtys,person,project_id:projId,project_name:proj?.name||'',location,notes,created_by:currentUser()});
     save('nx_movements',mvs);
-    toast(`📤 เบิกออก ${total} ${prod.unit||'ชิ้น'} ✅`);
+    toast(`เบิกออก ${total} ${prod.unit||'ชิ้น'}`);
   }
   closeModal('modal-gi');renderPage(currentPage);
 }
@@ -1748,7 +1892,7 @@ function saveGI(){
 function openRet(){
   const projs=load('nx_projects')||[];
   document.getElementById('ret-date').value=today();
-  document.getElementById('ret-project').innerHTML='<option value="">— เลือกโครงการ —</option>'+projs.map(p=>`<option value="${p.id}">${p.status==='done'?'✅ ':'🏗️ '}${p.name}</option>`).join('');
+  document.getElementById('ret-project').innerHTML='<option value="">— เลือกโครงการ —</option>'+projs.map(p=>`<option value="${p.id}">${p.status==='done'?'[เสร็จ] ':''}${p.name}</option>`).join('');
   document.getElementById('ret-items-list').innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px">เลือกโครงการก่อนครับ</div>';
   document.getElementById('ret-notes').value='';
   openModal('modal-ret');
@@ -1761,15 +1905,15 @@ function onRetProjectChange(){
   document.getElementById('ret-items-list').innerHTML=units.map(u=>{
     const prod=prods.find(p=>p.id===u.product_id)||{name:u.product_id};
     return `<label class="unit-item"><input type="checkbox" class="ret-unit-cb" value="${u.id}">
-      <div class="unit-info"><div class="u-name">${prod.name} — ${u.serial||u.id}</div><div class="u-sub">${u.detail||''} · ${PERSON_ICON[u.person]||''} ${u.person||''}</div></div></label>`;
+      <div class="unit-info"><div class="u-name">${prod.name} — ${u.serial||u.id}</div><div class="u-sub">${u.detail||''} · ${u.person||''}</div></div></label>`;
   }).join('');
 }
 
 // ==================== SAVE RETURN ====================
 function saveReturn(){
-  const projId=g('ret-project');if(!projId){toast('⚠️ เลือกโครงการก่อน');return;}
+  const projId=g('ret-project');if(!projId){toast('เลือกโครงการก่อน');return;}
   const checked=[...document.querySelectorAll('.ret-unit-cb:checked')].map(c=>c.value);
-  if(!checked.length){toast('⚠️ เลือกรายการที่รับคืนอย่างน้อย 1 ชิ้น');return;}
+  if(!checked.length){toast('เลือกรายการที่รับคืนอย่างน้อย 1 ชิ้น');return;}
   const condition=g('ret-condition');
   const person=g('ret-person');
   const date=g('ret-date')||today();
@@ -1789,7 +1933,7 @@ function saveReturn(){
     mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date,type:condition==='repair'?'REPAIR':'RETURN',product_id:u.product_id,product_name:prod.name,unit_id:uid,serial:u.serial||'',qty:1,person,project_id:projId,project_name:proj?.name||'',notes,created_by:currentUser()});
   });
   save('nx_units',units);save('nx_movements',mvs);
-  toast(`🔁 รับคืน ${checked.length} ชิ้น ✅`);
+  toast(`รับคืน ${checked.length} ชิ้น`);
   closeModal('modal-ret');renderPage(currentPage);
 }
 
@@ -1814,15 +1958,15 @@ function productForm(v={}){
   const catOpts=Object.entries(CATS).map(([k,c])=>`<option value="${k}" ${v.category===k?'selected':''}>${c.icon} ${c.label}</option>`).join('');
   const sku=v.sku||'';
   const imgs=v.images||[];
-  const imgPreviews=imgs.map((src,i)=>`<div style="position:relative;display:inline-block"><img src="${src}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)"><button type="button" onclick="removeProdImg(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button></div>`).join('');
+  const imgPreviews=imgs.map((src,i)=>`<div style="position:relative;display:inline-block"><img src="${src}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)"><button type="button" onclick="removeProdImg(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg class="ic"><use href="#i-x"/></svg></button></div>`).join('');
   return `<div class="form-grid">
     <div class="form-group form-full"><label class="lbl">ชื่อสินค้า</label><input id="pf-name" value="${v.name||''}" placeholder="ชื่อสินค้า..."></div>
-    <div class="form-group"><label class="lbl">หมวด</label><select id="pf-cat" onchange="onPfCatChange()">${catOpts}</select></div>
+    <input type="hidden" id="pf-cat" value="${v.category||Object.keys(CATS)[0]}">
     <div class="form-group"><label class="lbl">SKU <span style="font-size:10px;color:var(--muted)">(auto)</span></label><input id="pf-sku" value="${sku}" placeholder="จะสร้างอัตโนมัติ..."></div>
     <div class="form-group"><label class="lbl">ติดตาม</label>
       <select id="pf-serial"><option value="1" ${v.is_serial?'selected':''}>รายเครื่อง (Serial)</option><option value="0" ${!v.is_serial?'selected':''}>จำนวน (Bulk)</option></select></div>
     <div class="form-group"><label class="lbl">ประเภทการติดตั้ง</label>
-      <select id="pf-install"><option value="" ${!v.install_type?'selected':''}>— ไม่ระบุ —</option><option value="LPR" ${v.install_type==='LPR'?'selected':''}>📷 LPR</option><option value="non-LPR" ${v.install_type==='non-LPR'?'selected':''}>🔧 non-LPR</option></select></div>
+      <select id="pf-install"><option value="" ${!v.install_type?'selected':''}>— ไม่ระบุ —</option><option value="LPR" ${v.install_type==='LPR'?'selected':''}>LPR</option><option value="non-LPR" ${v.install_type==='non-LPR'?'selected':''}>non-LPR</option></select></div>
     <div class="form-group"><label class="lbl">หน่วย</label><input id="pf-unit" value="${v.unit||'ชิ้น'}"></div>
     <div class="form-group"><label class="lbl">จำนวนขั้นต่ำ</label><input type="number" id="pf-min" value="${v.min_qty||0}" min="0"></div>
     <div class="form-group form-full"><label class="lbl">หมายเหตุ / Spec (RAM, CPU, ขนาด...)</label><input id="pf-notes" value="${v.notes||''}" placeholder="เช่น RAM 4GB, CPU Snapdragon 730, จอ 10.4 นิ้ว"></div>
@@ -1830,7 +1974,7 @@ function productForm(v={}){
       <label class="lbl">รูปสินค้า (สูงสุด 2 รูป)</label>
       <div id="pf-img-preview" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">${imgPreviews}</div>
       <input type="file" id="pf-img-input" accept="image/*" style="display:none" onchange="addProdImg(this)">
-      <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('pf-img-input').click()">📷 เพิ่มรูป</button>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('pf-img-input').click()"><svg class="ic"><use href="#i-camera"/></svg> เพิ่มรูป</button>
       <span style="font-size:11px;color:var(--muted);margin-left:8px">รูปจะถูกบีบอัดและบันทึกในระบบ</span>
     </div>
   </div>`;
@@ -1844,7 +1988,7 @@ function onPfCatChange(){
 function addProdImg(input){
   const files=input.files;if(!files.length)return;
   const current=document.getElementById('pf-img-preview').querySelectorAll('img').length;
-  if(current>=2){toast('⚠️ ใส่รูปได้สูงสุด 2 รูป');return;}
+  if(current>=2){toast('ใส่รูปได้สูงสุด 2 รูป');return;}
   const file=files[0];
   const reader=new FileReader();
   reader.onload=function(e){
@@ -1868,7 +2012,7 @@ function addProdImg(input){
 function removeProdImg(idx){_pfImages.splice(idx,1);renderPfImgPreview();}
 function renderPfImgPreview(){
   const el=document.getElementById('pf-img-preview');if(!el)return;
-  el.innerHTML=_pfImages.map((src,i)=>`<div style="position:relative;display:inline-block"><img src="${src}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)"><button type="button" onclick="removeProdImg(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer">✕</button></div>`).join('');
+  el.innerHTML=_pfImages.map((src,i)=>`<div style="position:relative;display:inline-block"><img src="${src}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)"><button type="button" onclick="removeProdImg(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer"><svg class="ic"><use href="#i-x"/></svg></button></div>`).join('');
 }
 function openAddProduct(){
   _pfImages=[];
@@ -1882,19 +2026,19 @@ function openAddProduct(){
 function openEditProduct(id){
   const p=(load('nx_products')||[]).find(x=>x.id===id)||{};
   _pfImages=[...(p.images||[])];
-  document.getElementById('form-title').textContent='✏️ แก้ไขสินค้า';
+  document.getElementById('form-title').textContent='แก้ไขสินค้า';
   document.getElementById('form-body').innerHTML=productForm(p);
   _formAction='edit-product';_editId=id;openModal('modal-form');
 }
 function saveProduct(){
-  const name=g('pf-name');if(!name){toast('⚠️ กรอกชื่อสินค้า');return;}
+  const name=g('pf-name');if(!name){toast('กรอกชื่อสินค้า');return;}
   const prods=load('nx_products')||[];
   const cat=g('pf-cat');
   let sku=g('pf-sku')||genSKU(cat);
   const obj={name,category:cat,sku,is_serial:g('pf-serial')==='1',install_type:g('pf-install')||'',unit:g('pf-unit')||'ชิ้น',min_qty:parseInt(g('pf-min'))||0,notes:g('pf-notes'),images:_pfImages};
   if(_formAction==='edit-product'){const idx=prods.findIndex(p=>p.id===_editId);if(idx>-1) prods[idx]={...prods[idx],...obj};}
   else {obj.id=genId('P',prods);prods.push(obj);}
-  save('nx_products',prods);_pfImages=[];closeModal('modal-form');toast('บันทึกแล้ว ✅');renderPage(currentPage);
+  save('nx_products',prods);_pfImages=[];closeModal('modal-form');toast('บันทึกแล้ว');renderPage(currentPage);
 }
 function deleteProduct(id){showConfirm('ลบสินค้านี้?','',()=>{save('nx_products',(load('nx_products')||[]).filter(p=>p.id!==id));toast('ลบแล้ว');renderPage(currentPage);},'ลบ');}
 
@@ -1905,24 +2049,24 @@ function supplierForm(v={}){return `<div class="form-grid">
   <div class="form-group form-full"><label class="lbl">หมายเหตุ</label><input id="sf-notes" value="${v.notes||''}"></div>
 </div>`;}
 function openAddSupplier(){document.getElementById('form-title').textContent='+ เพิ่ม Supplier';document.getElementById('form-body').innerHTML=supplierForm();_formAction='add-supplier';_editId='';openModal('modal-form');}
-function openEditSupplier(id){const s=(load('nx_suppliers')||[]).find(x=>x.id===id)||{};document.getElementById('form-title').textContent='✏️ แก้ไข Supplier';document.getElementById('form-body').innerHTML=supplierForm(s);_formAction='edit-supplier';_editId=id;openModal('modal-form');}
+function openEditSupplier(id){const s=(load('nx_suppliers')||[]).find(x=>x.id===id)||{};document.getElementById('form-title').textContent='แก้ไข Supplier';document.getElementById('form-body').innerHTML=supplierForm(s);_formAction='edit-supplier';_editId=id;openModal('modal-form');}
 function saveSupplier(){
-  const name=g('sf-name');if(!name){toast('⚠️ กรอกชื่อ');return;}
+  const name=g('sf-name');if(!name){toast('กรอกชื่อ');return;}
   const sups=load('nx_suppliers')||[];
   const obj={name,contact:g('sf-contact'),notes:g('sf-notes')};
   if(_formAction==='edit-supplier'){const idx=sups.findIndex(s=>s.id===_editId);if(idx>-1) sups[idx]={...sups[idx],...obj};}
   else {obj.id=genId('S',sups);sups.push(obj);}
-  save('nx_suppliers',sups);closeModal('modal-form');toast('บันทึกแล้ว ✅');renderPage(currentPage);
+  save('nx_suppliers',sups);closeModal('modal-form');toast('บันทึกแล้ว');renderPage(currentPage);
 }
 function deleteSupplier(id){showConfirm('ลบ Supplier นี้?','',()=>{save('nx_suppliers',(load('nx_suppliers')||[]).filter(s=>s.id!==id));toast('ลบแล้ว');renderPage(currentPage);},'ลบ');}
 
 // -- Projects --
 function projectForm(v={}){
-  const pOpts=PERSONS.map(p=>`<option value="${p}" ${v.lead===p?'selected':''}>${PERSON_ICON[p]} ${p}</option>`).join('');
+  const pOpts=PERSONS.map(p=>`<option value="${p}" ${v.lead===p?'selected':''}>${p}</option>`).join('');
   return `<div class="form-grid">
     <div class="form-group form-full"><label class="lbl">ชื่อโครงการ</label><input id="prjf-name" value="${v.name||''}" placeholder="ชื่อโครงการ..."></div>
     <div class="form-group"><label class="lbl">ประเภท</label>
-      <select id="prjf-type"><option value="install" ${v.type==='install'?'selected':''}>🔧 ติดตั้ง</option><option value="repair" ${v.type==='repair'?'selected':''}>🛠️ ซ่อม</option></select></div>
+      <select id="prjf-type"><option value="install" ${v.type==='install'?'selected':''}>ติดตั้ง</option><option value="repair" ${v.type==='repair'?'selected':''}>ซ่อม</option></select></div>
     <div class="form-group"><label class="lbl">สถานะ</label>
       <select id="prjf-status"><option value="active" ${v.status==='active'||!v.status?'selected':''}>Active</option><option value="done" ${v.status==='done'?'selected':''}>เสร็จแล้ว</option></select></div>
     <div class="form-group"><label class="lbl">หัวหน้า</label><select id="prjf-lead">${pOpts}</select></div>
@@ -1932,14 +2076,14 @@ function projectForm(v={}){
   </div>`;
 }
 function openAddProject(){document.getElementById('form-title').textContent='+ เพิ่มโครงการ';document.getElementById('form-body').innerHTML=projectForm();_formAction='add-project';_editId='';openModal('modal-form');}
-function openEditProject(id){const p=(load('nx_projects')||[]).find(x=>x.id===id)||{};document.getElementById('form-title').textContent='✏️ แก้ไขโครงการ';document.getElementById('form-body').innerHTML=projectForm(p);_formAction='edit-project';_editId=id;openModal('modal-form');}
+function openEditProject(id){const p=(load('nx_projects')||[]).find(x=>x.id===id)||{};document.getElementById('form-title').textContent='แก้ไขโครงการ';document.getElementById('form-body').innerHTML=projectForm(p);_formAction='edit-project';_editId=id;openModal('modal-form');}
 function saveProject(){
-  const name=g('prjf-name');if(!name){toast('⚠️ กรอกชื่อโครงการ');return;}
+  const name=g('prjf-name');if(!name){toast('กรอกชื่อโครงการ');return;}
   const projs=load('nx_projects')||[];
   const obj={name,type:g('prjf-type'),status:g('prjf-status'),lead:g('prjf-lead'),location:g('prjf-location'),date_start:g('prjf-date'),notes:g('prjf-notes')};
   if(_formAction==='edit-project'){const idx=projs.findIndex(p=>p.id===_editId);if(idx>-1) projs[idx]={...projs[idx],...obj};}
   else {obj.id=genId('PJ',projs);projs.push(obj);}
-  save('nx_projects',projs);closeModal('modal-form');toast('บันทึกแล้ว ✅');renderPage(currentPage);
+  save('nx_projects',projs);closeModal('modal-form');toast('บันทึกแล้ว');renderPage(currentPage);
 }
 function deleteProject(id){showConfirm('ลบโครงการนี้?','',()=>{save('nx_projects',(load('nx_projects')||[]).filter(p=>p.id!==id));toast('ลบแล้ว');renderPage(currentPage);},'ลบ');}
 function importAllProjects(){
@@ -1959,9 +2103,9 @@ function importAllProjects(){
         date_start:today(),
         notes:''
       }));
-    if(!newOnes.length){toast('✅ มีโครงการครบแล้ว ไม่มีรายการใหม่');return;}
+    if(!newOnes.length){toast('มีโครงการครบแล้ว ไม่มีรายการใหม่');return;}
     save('nx_projects',[...projs,...newOnes]);
-    toast(`✅ นำเข้าสำเร็จ ${newOnes.length} โครงการ`);
+    toast(`นำเข้าสำเร็จ ${newOnes.length} โครงการ`);
     renderPage(currentPage);
   },'นำเข้า');
 }
@@ -1978,7 +2122,7 @@ function saveUnitStatus(){
   mvs.push({id:'MV'+String(mvs.length+1).padStart(4,'0'),date:today(),type:'ADJUST',product_id:units[idx].product_id,product_name:prod.name,unit_id:uid,serial:units[idx].serial||'',qty:1,person:np,notes:g('fs-notes'),created_by:currentUser()});
   units[idx]={...units[idx],status:ns,person:np,project_id:nproj||null,notes:g('fs-notes')};
   save('nx_units',units);save('nx_movements',mvs);
-  closeModal('modal-form');toast('อัปเดตแล้ว ✅');renderPage(currentPage);
+  closeModal('modal-form');toast('อัปเดตแล้ว');renderPage(currentPage);
 }
 
 // ==================== AUTH ====================
@@ -2076,7 +2220,7 @@ async function refreshUsersFromCloud(){
 async function pickUser(name){
   if(!ALLOWED_USERS.includes(name)){ showLoginError('ผู้ใช้ไม่ถูกต้อง'); return; }
   _pickedUser=name;
-  showLoginError('⏳ กำลังตรวจสอบ...');
+  showLoginError('กำลังตรวจสอบ...');
   await refreshUsersFromCloud();
   showLoginError('');
   if(userHasPassword(name)){
@@ -2101,12 +2245,12 @@ async function submitLogin(){
   const pwd=document.getElementById('login-pwd').value;
   if(!pwd){ showLoginError('กรุณากรอกรหัสผ่าน'); return; }
   const btn=document.getElementById('login-submit-btn');
-  btn.disabled=true;btn.textContent='⏳ กำลังตรวจสอบ...';
+  btn.disabled=true;btn.textContent='กำลังตรวจสอบ...';
   try{
     const ok=await verifyPassword(_pickedUser,pwd);
     if(!ok){
-      showLoginError('❌ รหัสผ่านไม่ถูกต้อง');
-      btn.disabled=false;btn.textContent='🔐 เข้าสู่ระบบ';
+      showLoginError('รหัสผ่านไม่ถูกต้อง');
+      btn.disabled=false;btn.textContent='เข้าสู่ระบบ';
       document.getElementById('login-pwd').select();
       return;
     }
@@ -2116,7 +2260,7 @@ async function submitLogin(){
     afterLogin();
   }catch(e){
     showLoginError('เกิดข้อผิดพลาด: '+e.message);
-    btn.disabled=false;btn.textContent='🔐 เข้าสู่ระบบ';
+    btn.disabled=false;btn.textContent='เข้าสู่ระบบ';
   }
 }
 async function submitSetup(){
@@ -2126,24 +2270,24 @@ async function submitSetup(){
   if(!p1||p1.length<4){ showLoginError('รหัสผ่านต้องมีอย่างน้อย 4 ตัวอักษร'); return; }
   if(p1!==p2){ showLoginError('รหัสผ่านทั้งสองครั้งไม่ตรงกัน'); return; }
   const btn=document.getElementById('setup-submit-btn');
-  btn.disabled=true;btn.textContent='⏳ กำลังบันทึก...';
+  btn.disabled=true;btn.textContent='กำลังบันทึก...';
   try{
     // Safety: re-check cloud right before write to avoid overwriting an existing account
     await refreshUsersFromCloud();
     if(userHasPassword(_pickedUser)){
-      showLoginError('⚠️ บัญชีนี้มีรหัสผ่านแล้ว — กรุณาเข้าสู่ระบบ');
-      btn.disabled=false;btn.textContent='💾 บันทึก & เข้าใช้งาน';
+      showLoginError('บัญชีนี้มีรหัสผ่านแล้ว — กรุณาเข้าสู่ระบบ');
+      btn.disabled=false;btn.textContent='บันทึก & เข้าใช้งาน';
       setTimeout(()=>{ document.getElementById('login-username').textContent=_pickedUser; showLoginStep('password'); },1200);
       return;
     }
     await registerPassword(_pickedUser,p1);
     setSession(_pickedUser);
     document.getElementById('login-screen').style.display='none';
-    toast('✅ ตั้งรหัสผ่านสำเร็จ');
+    toast('ตั้งรหัสผ่านสำเร็จ');
     afterLogin();
   }catch(e){
     showLoginError('เกิดข้อผิดพลาด: '+e.message);
-    btn.disabled=false;btn.textContent='💾 บันทึก & เข้าใช้งาน';
+    btn.disabled=false;btn.textContent='บันทึก & เข้าใช้งาน';
   }
 }
 function showLogin(){
@@ -2158,7 +2302,7 @@ function openUserMenu(){
   const info=document.getElementById('user-menu-info');
   const u=loadUsers()[user];
   const last=u?.lastLogin?new Date(u.lastLogin).toLocaleString('th-TH'):'-';
-  info.innerHTML=`<div style="font-size:15px;color:var(--text);font-weight:600;margin-bottom:4px">${PERSON_ICON[user]||'👤'} ${user}</div>เข้าใช้ล่าสุด: ${last}`;
+  info.innerHTML=`<div style="font-size:15px;color:var(--text);font-weight:600;margin-bottom:4px">${user}</div>เข้าใช้ล่าสุด: ${last}`;
   openModal('modal-user');
 }
 function doLogout(){
@@ -2186,10 +2330,10 @@ async function submitChangePassword(){
   if(oldp===newp){ err.textContent='รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิม'; return; }
   const user=currentUser();
   const ok=await verifyPassword(user,oldp);
-  if(!ok){ err.textContent='❌ รหัสผ่านปัจจุบันไม่ถูกต้อง'; return; }
+  if(!ok){ err.textContent='รหัสผ่านปัจจุบันไม่ถูกต้อง'; return; }
   await registerPassword(user,newp);
   closeModal('modal-changepwd');
-  toast('✅ เปลี่ยนรหัสผ่านสำเร็จ');
+  toast('เปลี่ยนรหัสผ่านสำเร็จ');
 }
 
 // ==================== BOOT ====================
@@ -2599,7 +2743,7 @@ const INIT_PROJECT_NAMES = [
 function startApp(){
   const chip=document.getElementById('user-chip');
   const user=currentUser();
-  chip.textContent=(PERSON_ICON[user]||'👤')+' '+user;
+  chip.textContent=user;
   chip.style.display='inline-block';
   // Seed initial products if none
   if(!(load('nx_products')||[]).length){
