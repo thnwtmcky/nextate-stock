@@ -814,6 +814,7 @@ const CATS = {
   board:     {label:'บอร์ด IO',    icon:svgIcon('wrench'), serial:true},
   poe:       {label:'POE Switch',   icon:svgIcon('plug'), serial:true},
   computer:  {label:'Computer',     icon:svgIcon('computer'), serial:true},
+  printer:   {label:'เครื่องพิมพ์',   icon:svgIcon('printer'), serial:true},
   cable:     {label:'สาย LAN',     icon:svgIcon('cable'), serial:false},
   other:     {label:'อื่นๆ',       icon:svgIcon('folder'), serial:false},
 };
@@ -1567,7 +1568,7 @@ function saveGR(){
       store=g('gr-qty-store')||'';
       const units=load('nx_units')||[];
       let ctr=units.length+1;
-      const pfxMap={tablet:'T',battery:'B',sim:'S',led:'L',router:'R',switching:'SW',board:'BD',poe:'POE',computer:'PC',other:'X'};
+      const pfxMap={tablet:'T',battery:'B',sim:'S',led:'L',router:'R',switching:'SW',board:'BD',poe:'POE',computer:'PC',printer:'PR',other:'X'};
       const pfx=pfxMap[prod.category]||'U';
       serials=Array.from({length:count},()=>pfx+'-'+String(ctr++).padStart(3,'0'));
     } else {
@@ -2017,7 +2018,7 @@ function submitForm(){
 }
 
 // -- Products --
-const SKU_PREFIX={tablet:'TAB',battery:'BAT',sim:'SIM',led:'LED',router:'ROU',switching:'SWT',board:'BRD',poe:'POE',computer:'CPU',cable:'CBL',other:'OTH'};
+const SKU_PREFIX={tablet:'TAB',battery:'BAT',sim:'SIM',led:'LED',router:'ROU',switching:'SWT',board:'BRD',poe:'POE',computer:'CPU',cable:'CBL',printer:'PRN',other:'OTH'};
 function genSKU(cat){
   const prods=load('nx_products')||[];
   const pfx=SKU_PREFIX[cat]||'OTH';
@@ -2031,10 +2032,11 @@ function productForm(v={}){
   const imgPreviews=imgs.map((src,i)=>`<div style="position:relative;display:inline-block"><img src="${src}" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)"><button type="button" onclick="removeProdImg(${i})" style="position:absolute;top:-6px;right:-6px;background:var(--red);border:none;color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg class="ic"><use href="#i-x"/></svg></button></div>`).join('');
   return `<div class="form-grid">
     <div class="form-group form-full"><label class="lbl">ชื่อสินค้า</label><input id="pf-name" value="${v.name||''}" placeholder="ชื่อสินค้า..."></div>
-    <input type="hidden" id="pf-cat" value="${v.category||Object.keys(CATS)[0]}">
+    <div class="form-group"><label class="lbl">หมวดหมู่</label>
+      <select id="pf-cat" onchange="onPfCatChange()">${catOpts}</select></div>
     <div class="form-group"><label class="lbl">SKU <span style="font-size:10px;color:var(--muted)">(auto)</span></label><input id="pf-sku" value="${sku}" placeholder="จะสร้างอัตโนมัติ..."></div>
     <div class="form-group"><label class="lbl">ติดตาม</label>
-      <select id="pf-serial"><option value="1" ${v.is_serial?'selected':''}>รายเครื่อง (Serial)</option><option value="0" ${!v.is_serial?'selected':''}>จำนวน (Bulk)</option></select></div>
+      <select id="pf-serial"><option value="1" ${v.is_serial!==false?'selected':''}>รายเครื่อง (Serial)</option><option value="0" ${v.is_serial===false?'selected':''}>จำนวน (Bulk)</option></select></div>
     <div class="form-group"><label class="lbl">ประเภทการติดตั้ง</label>
       <select id="pf-install"><option value="" ${!v.install_type?'selected':''}>— ไม่ระบุ —</option><option value="LPR" ${v.install_type==='LPR'?'selected':''}>LPR</option><option value="non-LPR" ${v.install_type==='non-LPR'?'selected':''}>non-LPR</option></select></div>
     <div class="form-group"><label class="lbl">หน่วย</label><input id="pf-unit" value="${v.unit||'ชิ้น'}"></div>
