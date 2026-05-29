@@ -1148,8 +1148,9 @@ function renderUnits(){
       </td>
       <td><div class="row-actions">
         <button class="btn btn-secondary btn-sm btn-icon" onclick="openQR('${u.id}')" title="QR Code"><svg class="ic"><use href="#i-qr"/></svg></button>
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditUnit('${u.id}')" title="แก้ไขรายละเอียด"><svg class="ic"><use href="#i-edit"/></svg></button>
         <button class="btn btn-warning btn-sm btn-icon" onclick="openUnitStatus('${u.id}')" title="เปลี่ยนสถานะ"><svg class="ic"><use href="#i-refresh"/></svg></button>
-        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteUnit('${u.id}')"<svg class="ic"><use href="#i-trash"/></svg></button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteUnit('${u.id}')" title="ลบ"><svg class="ic"><use href="#i-trash"/></svg></button>
       </div></td>
     </tr>`;
   }).join('');
@@ -1203,6 +1204,74 @@ function deleteUnit(id){
     save('nx_units',units);toast('ลบแล้ว');renderPage(currentPage);
   },'ลบ');
 }
+function openEditUnit(id){
+  const units=load('nx_units')||[];
+  const u=units.find(x=>x.id===id);if(!u)return;
+  const prods=load('nx_products')||[];
+  const prod=prods.find(p=>p.id===u.product_id)||{};
+  const isSim=prod.category==='sim';
+  const isDevice=['tablet','computer'].includes(prod.category);
+  document.getElementById('form-title').textContent='✏️ แก้ไขรายละเอียด: '+u.id;
+  document.getElementById('form-body').innerHTML=`
+    <div class="form-grid">
+      <div class="form-group form-full"><label class="lbl">สินค้า</label>
+        <input value="${prod.name||u.product_id}" disabled style="opacity:.6"></div>
+      <div class="form-group"><label class="lbl">Serial / SN</label>
+        <input id="eu-serial" value="${u.serial||''}"></div>
+      <div class="form-group"><label class="lbl">รายละเอียด</label>
+        <input id="eu-detail" value="${u.detail||''}" placeholder="สี, รุ่น, spec..."></div>
+      ${isSim?`
+      <div class="form-group"><label class="lbl">เบอร์โทร (ซิม)</label>
+        <input id="eu-phone" value="${u.detail||''}" placeholder="0812345678"></div>
+      `:`
+      <div class="form-group"><label class="lbl">PIN / รหัสผ่าน</label>
+        <input id="eu-pin" value="${u.pin||''}" placeholder="เช่น 1234"></div>
+      ${isDevice?`
+      <div class="form-group"><label class="lbl">IMEI 1</label>
+        <input id="eu-imei1" value="${u.imei1||''}" placeholder="เลข IMEI 1"></div>
+      <div class="form-group"><label class="lbl">IMEI 2</label>
+        <input id="eu-imei2" value="${u.imei2||''}" placeholder="เลข IMEI 2"></div>
+      `:''}
+      `}
+      <div class="form-group"><label class="lbl">ยี่ห้อ</label>
+        <input id="eu-brand" value="${u.brand||''}" placeholder="เช่น Samsung"></div>
+      <div class="form-group"><label class="lbl">รุ่น</label>
+        <input id="eu-model" value="${u.model||''}" placeholder="เช่น Galaxy A7"></div>
+      <div class="form-group"><label class="lbl">วันหมดประกัน</label>
+        <input type="date" id="eu-warranty" value="${u.warranty||''}"></div>
+      <div class="form-group"><label class="lbl">ร้านที่ซื้อ</label>
+        <input id="eu-store" value="${u.store||''}" placeholder="เช่น Shopee"></div>
+      <div class="form-group form-full"><label class="lbl">หมายเหตุ</label>
+        <input id="eu-notes" value="${u.notes||''}"></div>
+    </div>`;
+  _formAction='edit-unit';_editId=id;
+  openModal('modal-form');
+}
+function saveEditUnit(){
+  const units=load('nx_units')||[];
+  const idx=units.findIndex(u=>u.id===_editId);if(idx<0)return;
+  const prods=load('nx_products')||[];
+  const prod=prods.find(p=>p.id===units[idx].product_id)||{};
+  const isSim=prod.category==='sim';
+  const isDevice=['tablet','computer'].includes(prod.category);
+  const g2=id=>{const el=document.getElementById(id);return el?el.value:null;};
+  units[idx]={...units[idx],
+    serial:g2('eu-serial')||units[idx].serial,
+    detail:isSim?(g2('eu-phone')||''):(g2('eu-detail')||''),
+    pin:isSim?'':(g2('eu-pin')||''),
+    imei1:isDevice?(g2('eu-imei1')||''):units[idx].imei1||'',
+    imei2:isDevice?(g2('eu-imei2')||''):units[idx].imei2||'',
+    brand:g2('eu-brand')||'',
+    model:g2('eu-model')||'',
+    warranty:g2('eu-warranty')||'',
+    store:g2('eu-store')||'',
+    notes:g2('eu-notes')||''
+  };
+  save('nx_units',units);
+  closeModal('modal-form');
+  toast('บันทึกแล้ว ✅');
+  renderPage(currentPage);
+}
 
 // ==================== MOVEMENTS PAGE ====================
 function renderMovements(){
@@ -1252,8 +1321,8 @@ function renderProjects(){
       <td>${sTag}</td>
       <td style="font-size:11px;color:var(--muted)">${fmtDate(p.date_start)}</td>
       <td><div class="row-actions">
-        <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditProject('${p.id}')"<svg class="ic"><use href="#i-edit"/></svg></button>
-        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteProject('${p.id}')"<svg class="ic"><use href="#i-trash"/></svg></button>
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditProject('${p.id}')"><svg class="ic"><use href="#i-edit"/></svg></button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteProject('${p.id}')"><svg class="ic"><use href="#i-trash"/></svg></button>
       </div></td>
     </tr>`;
   }).join('');
@@ -1280,8 +1349,8 @@ function renderSuppliers(){
     <td style="font-size:12px;color:var(--muted)">${s.contact||'—'}</td>
     <td style="font-size:12px;color:var(--muted)">${s.notes||'—'}</td>
     <td><div class="row-actions">
-      <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditSupplier('${s.id}')"<svg class="ic"><use href="#i-edit"/></svg></button>
-      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteSupplier('${s.id}')"<svg class="ic"><use href="#i-trash"/></svg></button>
+      <button class="btn btn-secondary btn-sm btn-icon" onclick="openEditSupplier('${s.id}')"><svg class="ic"><use href="#i-edit"/></svg></button>
+      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteSupplier('${s.id}')"><svg class="ic"><use href="#i-trash"/></svg></button>
     </div></td>
   </tr>`).join('');
   return `
@@ -1944,6 +2013,7 @@ function submitForm(){
   else if(_formAction==='add-supplier'||_formAction==='edit-supplier') saveSupplier();
   else if(_formAction==='add-project'||_formAction==='edit-project') saveProject();
   else if(_formAction==='unit-status') saveUnitStatus();
+  else if(_formAction==='edit-unit') saveEditUnit();
 }
 
 // -- Products --
